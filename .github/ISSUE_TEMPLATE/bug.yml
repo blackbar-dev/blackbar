@@ -1,0 +1,30 @@
+name: Bug
+description: Blackbar missed something, or flagged something that is not personal data.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: "**Please never paste real personal data.** Replace it with made-up values of the same shape."
+  - type: textarea
+    id: input
+    attributes:
+      label: Input text (made up)
+      render: text
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: What happened
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Blackbar version

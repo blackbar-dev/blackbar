@@ -1,0 +1,23 @@
+[
+  {
+    "id": "mixed-001",
+    "text": "Invoice for lena@example.de: pay to CH93 0076 2011 6238 5295 7 within 14 days.",
+    "expected": [
+      { "type": "EMAIL", "value": "lena@example.de" },
+      { "type": "IBAN", "value": "CH93 0076 2011 6238 5295 7" }
+    ]
+  },
+  {
+    "id": "mixed-002",
+    "text": "Meeting at 10:00 in room B2, bring the Q3 slides.",
+    "expected": []
+  },
+  {
+    "id": "mixed-003",
+    "text": "Erstattung an PL61109010140000071219812874, Rückfragen an buchhaltung@example.pl",
+    "expected": [
+      { "type": "IBAN", "value": "PL61109010140000071219812874" },
+      { "type": "EMAIL", "value": "buchhaltung@example.pl" }
+    ]
+  }
+]

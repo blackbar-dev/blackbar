@@ -1,0 +1,81 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    name: ci
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - run: npm ci --ignore-scripts
+
+      - name: Lint and format (biome)
+        run: npm run lint
+
+      - name: Types (tsc)
+        run: npm run typecheck
+
+      - name: Tests and coverage (vitest)
+        run: npm run test:coverage
+
+      - name: Build
+        run: npm run build
+
+      - name: Bundle size
+        run: npm run check:size
+
+      - name: No runtime dependencies
+        run: npm run check:deps
+
+      # Benchmark: recall and precision must not get worse than on main.
+      # main's code is built separately and measured against this PR's corpus.
+      - name: Benchmark (this commit)
+        run: node bench/run.mjs --out bench/results/head.json
+
+      - name: Check out main for the baseline
+        if: github.event_name == 'pull_request'
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          path: .base
+          persist-credentials: false
+
+      - name: Build main for the baseline
+        if: github.event_name == 'pull_request'
+        working-directory: .base
+        run: |
+          if [ -f bench/run.mjs ]; then
+            npm ci --ignore-scripts && npx tsup
+          else
+            echo "main has no benchmark yet"
+          fi
+
+      - name: Benchmark (main)
+        if: github.event_name == 'pull_request'
+        run: |
+          if [ -f .base/dist/index.js ]; then
+            node bench/run.mjs --dist .base/dist --out bench/results/base.json
+          fi
+
+      - name: Compare with main
+        run: node bench/compare.mjs bench/results/base.json bench/results/head.json --summary "$GITHUB_STEP_SUMMARY"

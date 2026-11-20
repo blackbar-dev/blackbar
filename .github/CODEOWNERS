@@ -1,0 +1,11 @@
+# Everything here needs the human maintainer's review. Code paths are free for the crew.
+/.github/        @bash-bash
+/.crew/          @bash-bash
+/AGENTS.md       @bash-bash
+/package.json    @bash-bash
+/package-lock.json @bash-bash
+/LICENSE         @bash-bash
+/biome.json      @bash-bash
+/vitest.config.ts @bash-bash
+/bench/          @bash-bash
+/scripts/        @bash-bash

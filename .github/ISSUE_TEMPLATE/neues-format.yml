@@ -1,0 +1,26 @@
+name: New format
+description: Suggest a kind of personal data Blackbar should detect (e.g. a national ID).
+labels: [neues-format]
+body:
+  - type: markdown
+    attributes:
+      value: "**Please never paste real personal data.** Use published test numbers or made-up values."
+  - type: input
+    id: name
+    attributes:
+      label: Format
+      placeholder: e.g. German tax ID (Steuer-ID)
+    validations:
+      required: true
+  - type: textarea
+    id: rules
+    attributes:
+      label: How to recognise it
+      description: Length, structure, checksum, link to the official spec if you have one.
+    validations:
+      required: true
+  - type: textarea
+    id: examples
+    attributes:
+      label: Example values (test numbers only)
+      render: text

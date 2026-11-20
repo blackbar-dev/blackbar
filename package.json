@@ -1,0 +1,56 @@
+{
+  "name": "blackbar",
+  "version": "0.0.0",
+  "description": "Find and redact personal data in text, and restore it later. Zero dependencies.",
+  "license": "Apache-2.0",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/blackbar-dev/blackbar.git"
+  },
+  "homepage": "https://github.com/blackbar-dev/blackbar#readme",
+  "keywords": [
+    "pii",
+    "redaction",
+    "privacy",
+    "gdpr",
+    "anonymization"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "bin": {
+    "blackbar": "./dist/cli.js"
+  },
+  "scripts": {
+    "build": "tsup && tsc -p tsconfig.build.json",
+    "lint": "biome check .",
+    "format": "biome check --write .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "bench": "node bench/run.mjs",
+    "bench:compare": "node bench/compare.mjs",
+    "check:deps": "node scripts/check-no-deps.mjs",
+    "check:size": "node scripts/check-size.mjs",
+    "changeset": "changeset"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.6.8",
+    "@changesets/cli": "3.0.3",
+    "@types/node": "22.20.5",
+    "@vitest/coverage-v8": "5.1.1",
+    "tsup": "9.0.0",
+    "typescript": "7.0.2",
+    "vitest": "5.1.1"
+  }
+}

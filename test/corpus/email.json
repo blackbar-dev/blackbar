@@ -1,0 +1,47 @@
+[
+  {
+    "id": "email-001",
+    "text": "Hi team, please reply to anna.schmidt@example.com by Friday.",
+    "expected": [{ "type": "EMAIL", "value": "anna.schmidt@example.com" }]
+  },
+  {
+    "id": "email-002",
+    "text": "Contact: <support+billing@help.example.org>",
+    "expected": [{ "type": "EMAIL", "value": "support+billing@help.example.org" }]
+  },
+  {
+    "id": "email-003",
+    "text": "CC: j_doe@example.net, m-k@example.co.uk; thanks!",
+    "expected": [
+      { "type": "EMAIL", "value": "j_doe@example.net" },
+      { "type": "EMAIL", "value": "m-k@example.co.uk" }
+    ]
+  },
+  {
+    "id": "email-004",
+    "text": "Schreib mir an lena@example.de.",
+    "expected": [{ "type": "EMAIL", "value": "lena@example.de" }]
+  },
+  {
+    "id": "email-005",
+    "text": "From: \"Tom\" <TOM.Example@Example.COM>",
+    "expected": [{ "type": "EMAIL", "value": "TOM.Example@Example.COM" }]
+  },
+  { "id": "email-006", "text": "Follow us @examplecorp and use #privacy", "expected": [] },
+  {
+    "id": "email-007",
+    "text": "Run git clone git@github.com:org/repo.git",
+    "expected": [{ "type": "EMAIL", "value": "git@github.com" }]
+  },
+  {
+    "id": "email-008",
+    "text": "Version 2.0@beta is not an address, neither is foo@bar",
+    "expected": []
+  },
+  { "id": "email-009", "text": "Die Datei heißt bericht@2026.pdf", "expected": [] },
+  {
+    "id": "email-010",
+    "text": "Ticket from noreply@mail.example.com (auto)",
+    "expected": [{ "type": "EMAIL", "value": "noreply@mail.example.com" }]
+  }
+]

@@ -1,0 +1,43 @@
+[
+  {
+    "id": "iban-001",
+    "text": "Bitte überweisen an DE89 3704 0044 0532 0130 00, Verwendungszweck R-1042.",
+    "expected": [{ "type": "IBAN", "value": "DE89 3704 0044 0532 0130 00" }]
+  },
+  {
+    "id": "iban-002",
+    "text": "Payee account GB82WEST12345698765432.",
+    "expected": [{ "type": "IBAN", "value": "GB82WEST12345698765432" }]
+  },
+  {
+    "id": "iban-003",
+    "text": "IBAN FR14 2004 1010 0505 0001 3M02 606 (Banque Exemple)",
+    "expected": [{ "type": "IBAN", "value": "FR14 2004 1010 0505 0001 3M02 606" }]
+  },
+  {
+    "id": "iban-004",
+    "text": "Rekening NL91ABNA0417164300 en ook BE68 5390 0754 7034",
+    "expected": [
+      { "type": "IBAN", "value": "NL91ABNA0417164300" },
+      { "type": "IBAN", "value": "BE68 5390 0754 7034" }
+    ]
+  },
+  {
+    "id": "iban-005",
+    "text": "Konto: AT61 1904 3002 3457 3201",
+    "expected": [{ "type": "IBAN", "value": "AT61 1904 3002 3457 3201" }]
+  },
+  { "id": "iban-006", "text": "Typo in DE88370400440532013000 should not match", "expected": [] },
+  { "id": "iban-007", "text": "Build ID DE12AB34CD56EF78GH90 passed", "expected": [] },
+  { "id": "iban-008", "text": "Order number ES12 3456 7890 1234 5678 9012", "expected": [] },
+  {
+    "id": "iban-009",
+    "text": "Conto IT60X0542811101000000123456 intestato a Mario",
+    "expected": [{ "type": "IBAN", "value": "IT60X0542811101000000123456" }]
+  },
+  {
+    "id": "iban-010",
+    "text": "Konto NO93 8601 1117 947 i Oslo",
+    "expected": [{ "type": "IBAN", "value": "NO93 8601 1117 947" }]
+  }
+]
