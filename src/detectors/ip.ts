@@ -29,7 +29,7 @@ export function isValidIpv6(s: string): boolean {
     count += 1;
   }
   if (!groups.every((g) => /^[0-9A-Fa-f]{1,4}$/.test(g))) return false;
-  if (halves.length === 2) return groups.length > 0 && count <= 7;
+  if (halves.length === 2) return count > 0 && count <= 7;
   return count === 8;
 }
 

@@ -23,6 +23,7 @@ describe('isValidIpv6', () => {
     expect(isValidIpv6('::1')).toBe(true);
     expect(isValidIpv6('2001:db8::')).toBe(true);
     expect(isValidIpv6('::ffff:192.0.2.1')).toBe(true);
+    expect(isValidIpv6('::192.0.2.1')).toBe(true);
   });
   it('rejects two "::", bad groups, wrong counts and times', () => {
     expect(isValidIpv6('2001::db8::1')).toBe(false);
@@ -52,6 +53,9 @@ describe('ipDetector', () => {
       '::ffff:192.0.2.33',
       '203.0.113.5',
     ]);
+  });
+  it('reports a bare "::" plus IPv4 tail as one address', () => {
+    expect(values('compat ::192.0.2.1 here')).toEqual(['::192.0.2.1']);
   });
   it('ignores version numbers, times and dates', () => {
     expect(values('v1.2.3.4 1.2.3.4.5 12:30:45 2026.11.21 std::vector')).toEqual([]);

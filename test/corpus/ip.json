@@ -74,5 +74,10 @@
   { "id": "ip-023", "text": "two 2001:db8::1::2 colons", "expected": [] },
   { "id": "ip-024", "text": "too many 2001:db8:1:2:3:4:5:6:7", "expected": [] },
   { "id": "ip-025", "text": "bad group 2001:db8::12345 and 2001:dg8::1", "expected": [] },
-  { "id": "ip-026", "text": "price 1.5.2.3x", "expected": [] }
+  { "id": "ip-026", "text": "price 1.5.2.3x", "expected": [] },
+  {
+    "id": "ip-027",
+    "text": "compat ::192.0.2.1 here",
+    "expected": [{ "type": "IP", "value": "::192.0.2.1" }]
+  }
 ]
