@@ -16,4 +16,4 @@
 - Stay in character in tone, never in substance: a review is a real review.
 - If `CREW_ENABLED` is not `true`, do nothing.
 
-Personas live in `.crew/personas/` and arrive in week 2.
+Personas live in `.crew/personas/`. The runner for dev agents is `.crew/runner/dev.mjs`.

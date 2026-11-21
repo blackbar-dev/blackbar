@@ -1,0 +1,68 @@
+name: crew-dev
+
+# One crew character works on one accepted issue and opens or updates a PR.
+# Started by hand (week 2) or later by the show engine via repository_dispatch.
+# Never started by issue or comment events, so outside text cannot trigger a run.
+on:
+  workflow_dispatch:
+    inputs:
+      issue:
+        description: Issue number (must have the label "accepted")
+        required: true
+        type: number
+      character:
+        description: Who programs
+        required: true
+        type: choice
+        options: [vale, kevin, ingrid, dieter]
+  repository_dispatch:
+    types: [crew-dev]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: crew-dev
+  cancel-in-progress: false
+
+jobs:
+  dev:
+    if: vars.CREW_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: App token (this repo only, 1 hour)
+        id: app
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ secrets.CREW_APP_ID }}
+          private-key: ${{ secrets.CREW_APP_PRIVATE_KEY }}
+
+      - uses: actions/checkout@v5
+        with:
+          ref: main
+          fetch-depth: 0
+          persist-credentials: false
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install
+        run: |
+          npm ci --ignore-scripts
+          npm ci --ignore-scripts --prefix .crew/runner
+          npm run build
+
+      - name: Run the character
+        timeout-minutes: 20
+        env:
+          CREW_REPO: ${{ github.repository }}
+          CREW_ISSUE: ${{ inputs.issue || github.event.client_payload.issue }}
+          CREW_CHARACTER: ${{ inputs.character || github.event.client_payload.character }}
+          CREW_MODEL: ${{ vars.CREW_MODEL || 'claude-sonnet-5-5' }}
+          CREW_MAX_USD: ${{ vars.CREW_MAX_USD_PER_RUN || '3' }}
+          GH_TOKEN: ${{ steps.app.outputs.token }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: node .crew/runner/dev.mjs

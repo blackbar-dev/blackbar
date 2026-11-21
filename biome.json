@@ -1,6 +1,17 @@
 {
   "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
-  "files": { "includes": ["**", "!dist", "!coverage", "!bench/results", "!.base"] },
+  "files": {
+    "includes": [
+      "**",
+      "!dist",
+      "!coverage",
+      "!bench/results",
+      "!.base",
+      "!.crew/runner/node_modules",
+      "!.crew-out",
+      "!**/*.md"
+    ]
+  },
   "formatter": { "indentStyle": "space", "indentWidth": 2, "lineWidth": 100 },
   "javascript": { "formatter": { "quoteStyle": "single" } },
   "linter": { "enabled": true, "rules": { "preset": "recommended" } }
