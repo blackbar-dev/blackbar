@@ -1,5 +1,8 @@
 # Blackbar
 
+[![ci](https://github.com/blackbar-dev/blackbar/actions/workflows/ci.yml/badge.svg)](https://github.com/blackbar-dev/blackbar/actions/workflows/ci.yml)
+[![license](https://img.shields.io/badge/license-Apache%202.0-blue)](LICENSE)
+
 **Find personal data in text, black it out, and put it back later.**
 Zero runtime dependencies. Apache 2.0 licensed.
 
