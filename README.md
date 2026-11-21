@@ -6,6 +6,8 @@
 **Find personal data in text, black it out, and put it back later.**
 Zero runtime dependencies. Apache 2.0 licensed.
 
+![Blackbar finds an e-mail address and an IBAN in a support ticket, swaps them for [EMAIL_1] and [IBAN_1], and puts the real values back into the LLM's reply](docs/media/demo.gif)
+
 ```ts
 import { redact, restore } from 'blackbar';
 
