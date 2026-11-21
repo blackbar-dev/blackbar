@@ -14,6 +14,9 @@ export interface DetectOptions {
  * Runs all detectors and returns non-overlapping matches, sorted by position.
  * When two matches overlap, the longer one wins; then the higher score; then the earlier one.
  * Length comes first so a short match can never split a longer one and leave the rest in the text.
+ * A match fully inside the winner is dropped. A match that only partly overlaps is one finding
+ * with the winner: the winner keeps its type and score but grows to cover both spans, and its
+ * value becomes that text. Otherwise the part sticking out would stay in the text unredacted.
  */
 export function detect(text: string, options: DetectOptions = {}): Match[] {
   const { minScore = 0 } = options;
@@ -29,9 +32,23 @@ export function detect(text: string, options: DetectOptions = {}): Match[] {
     .filter((m) => !(minScore > 0) || m.score >= minScore);
   all.sort((a, b) => b.end - b.start - (a.end - a.start) || b.score - a.score || a.start - b.start);
 
-  const kept: Match[] = [];
+  // `kept` stays in rank order and disjoint, so the first overlapping entry is the winner.
+  // Folding m and every kept span it touches into one leaves no partial overlap behind.
+  let kept: Match[] = [];
   for (const m of all) {
-    if (!kept.some((k) => m.start < k.end && k.start < m.end)) kept.push(m);
+    const hits = kept.filter((k) => m.start < k.end && k.start < m.end);
+    const winner = hits[0];
+    if (!winner) {
+      kept.push(m);
+      continue;
+    }
+    const start = Math.min(m.start, ...hits.map((k) => k.start));
+    const end = Math.max(m.end, ...hits.map((k) => k.end));
+    if (start === winner.start && end === winner.end) continue;
+    const grown = { ...winner, start, end, value: text.slice(start, end) };
+    kept = kept
+      .filter((k) => !hits.includes(k) || k === winner)
+      .map((k) => (k === winner ? grown : k));
   }
   return kept.sort((a, b) => a.start - b.start);
 }
