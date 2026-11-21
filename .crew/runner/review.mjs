@@ -11,6 +11,7 @@
 //   ANTHROPIC_API_KEY
 //   CREW_MODEL               default claude-opus-5-5
 //   CREW_MAX_USD             spend cap for one review, default 1.5
+//   CREW_SECURITY_OUT        optional: result file of Kiki's security check (security.mjs), run before this
 //   CREW_DRY_RUN=1           local test: prints the review, writes nothing
 import { appendFileSync, existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -295,6 +296,24 @@ if (!approved) {
   await requestFixRound('changes requested');
   process.exit(0);
 }
+
+// Kiki's security check ran before this review. Without its result nothing is merged by the crew.
+let security = null;
+const securityOut = process.env.CREW_SECURITY_OUT;
+if (securityOut && existsSync(securityOut))
+  security = JSON.parse(readFileSync(securityOut, 'utf8'));
+if (!security?.conclusion || security.conclusion === 'skipped') {
+  const run = (
+    await gh.get(`/repos/{repo}/commits/${headSha}/check-runs?check_name=crew-security`)
+  )?.check_runs?.find((c) => c.status === 'completed');
+  security = run ? { conclusion: run.conclusion } : null;
+}
+if (security?.conclusion === 'failure') {
+  await requestFixRound('Kiki found a security problem');
+  process.exit(0);
+}
+if (!['success', 'neutral'].includes(security?.conclusion))
+  stop('✅ Approved. No security check result, so the maintainer merges.');
 
 const onlyCode = files.every((f) => AUTO_MERGE_PATHS.some((re) => re.test(f.filename)));
 if (!onlyCode) stop('✅ Approved. Touches paths outside src/ and test/, so the maintainer merges.');

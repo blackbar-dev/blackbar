@@ -92,6 +92,9 @@ if (issue.pull_request) fail(`#${issueNumber} is a pull request, not an issue`);
 if (issue.state !== 'open') fail(`Issue #${issueNumber} is closed`);
 const labels = (issue.labels ?? []).map((l) => (typeof l === 'string' ? l : l.name));
 if (!labels.includes('accepted')) fail(`Issue #${issueNumber} has no "accepted" label`);
+// Some characters only take certain work (Kiki: issues labelled "security").
+if (front.requires_label && !labels.includes(front.requires_label))
+  fail(`${persona.name} only works on issues labelled "${front.requires_label}"`);
 
 const slug =
   issue.title

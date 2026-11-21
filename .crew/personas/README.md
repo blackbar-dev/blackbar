@@ -10,3 +10,5 @@ Front matter fields:
 - `git_email`: commit author e-mail (never a real mailbox)
 - `can_code`: may be assigned to `crew-dev`
 - `can_review`: may be assigned to `crew-review`
+- `security_review`: runs the security check (`crew-security`) instead of normal reviews
+- `requires_label`: works only on issues that carry this label (in addition to `accepted`)
