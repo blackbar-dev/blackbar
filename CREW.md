@@ -10,7 +10,7 @@ GitHub App **Synapsio Crew**. Commits name the character as author; reviews come
 | Kevin O'Brien            | CTO                 | core code, quick reviews             |
 | Ingrid Solberg           | Staff Engineer      | core code, strict reviews            |
 | Valentina "Vale" Ramírez | Engineering intern  | detectors and tests, curious reviews |
-| Dieter Krause            | Finance             | German formats, AI budget            |
+| Dieter Krause | Finance | reviews German formats, AI budget (does not code) |
 | Jules Diallo             | Product Designer    | CLI output, website, logo            |
 | Remi Balogun             | Developer Relations | docs, community, triage of issues    |
 | Brooke Hamilton          | CEO                 | roadmap, release notes               |

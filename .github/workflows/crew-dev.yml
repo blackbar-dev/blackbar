@@ -14,7 +14,7 @@ on:
         description: Who programs
         required: true
         type: choice
-        options: [vale, kevin, ingrid, dieter]
+        options: [vale, kevin, ingrid]
   repository_dispatch:
     types: [crew-dev]
 
