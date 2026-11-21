@@ -67,11 +67,22 @@ describe('taxIdDetector', () => {
   it('ignores mixed separators, longer runs and glued words', () => {
     expect(values('47 152/039 646 471520396461 X47152039646 47152039646x')).toEqual([]);
   });
-  it('ignores a tax ID shape glued to another digit group', () => {
+  it('skips a grouped tax ID shape behind a phone prefix', () => {
     expect(values('+49 30 47 152 039 646')).toEqual([]);
-    expect(values('47 152 039 646 7')).toEqual([]);
-    expect(values('9/47/152/039/646')).toEqual([]);
     expect(values('+49 30 47 152 039 646')).toEqual([]);
+    expect(values('+49 47 152 039 646')).toEqual([]);
+    expect(values('030 47 152 039 646')).toEqual([]);
+  });
+  it('still finds a grouped ID next to another digit group, with a lower score', () => {
+    const scores = (text: string) => taxIdDetector.find(text).map((m) => [m.value, m.score]);
+    expect(scores('47 152 039 646 7')).toEqual([['47 152 039 646', 0.6]]);
+    expect(scores('9/47/152/039/646')).toEqual([['47/152/039/646', 0.6]]);
+    expect(scores('Kind 2 47 152 039 646')).toEqual([['47 152 039 646', 0.6]]);
+    expect(scores('IdNr 47 152 039 646')).toEqual([['47 152 039 646', 0.85]]);
+  });
+  it('accepts dots and hyphens as group separators', () => {
+    expect(values('47.152.039.646 47-152-039-646')).toEqual(['47.152.039.646', '47-152-039-646']);
+    expect(values('47.152-039 646')).toEqual([]);
   });
   it('finds a compact ID next to other numbers', () => {
     expect(values('Kind 1 47152039646')).toEqual(['47152039646']);
