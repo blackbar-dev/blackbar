@@ -10,6 +10,48 @@ const EMAIL = new RegExp(
   'g',
 );
 
+// "logo@2x.png" has the shape of an address, but the "TLD" is a file extension.
+// Only extensions that are not real TLDs belong here (no .zip, .mov, .md: those are real TLDs).
+const FILE_EXTENSIONS = new Set([
+  'png',
+  'jpg',
+  'jpeg',
+  'gif',
+  'svg',
+  'webp',
+  'bmp',
+  'ico',
+  'tif',
+  'tiff',
+  'heic',
+  'pdf',
+  'doc',
+  'docx',
+  'xls',
+  'xlsx',
+  'ppt',
+  'pptx',
+  'txt',
+  'csv',
+  'json',
+  'xml',
+  'html',
+  'htm',
+  'css',
+  'js',
+  'ts',
+  'yml',
+  'yaml',
+  'log',
+  'mp3',
+  'mp4',
+  'wav',
+]);
+
+function hasFileExtension(value: string): boolean {
+  return FILE_EXTENSIONS.has(value.slice(value.lastIndexOf('.') + 1).toLowerCase());
+}
+
 export const emailDetector: Detector = {
   type: 'EMAIL',
   find(text: string): Match[] {
@@ -18,6 +60,7 @@ export const emailDetector: Detector = {
       const value = m[0];
       const local = value.slice(0, value.indexOf('@'));
       if (local.length > 64 || value.length > 254) continue;
+      if (hasFileExtension(value)) continue;
       matches.push({ type: 'EMAIL', start: m.index, end: m.index + value.length, value });
     }
     return matches;

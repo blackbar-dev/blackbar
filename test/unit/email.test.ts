@@ -37,6 +37,13 @@ describe('emailDetector', () => {
     expect(values('anna@-example.com')).toEqual([]);
   });
 
+  it('ignores file names that look like addresses', () => {
+    expect(values('bericht@2026.pdf')).toEqual([]);
+    expect(values('logo@2x.png scan@300dpi.jpg')).toEqual([]);
+    expect(values('Logo@2X.PNG')).toEqual([]);
+    expect(values('mail anna@example.com and logo@2x.png')).toEqual(['anna@example.com']);
+  });
+
   it('skips addresses with an over-long local part', () => {
     expect(values(`${'a'.repeat(65)}@example.com`)).toEqual([]);
   });
