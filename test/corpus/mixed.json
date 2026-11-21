@@ -19,5 +19,10 @@
       { "type": "IBAN", "value": "PL61109010140000071219812874" },
       { "type": "EMAIL", "value": "buchhaltung@example.pl" }
     ]
+  },
+  {
+    "id": "mixed-004",
+    "text": "Reply to DE89370400440532013000@example.com about the refund.",
+    "expected": [{ "type": "EMAIL", "value": "DE89370400440532013000@example.com" }]
   }
 ]

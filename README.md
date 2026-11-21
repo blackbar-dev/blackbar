@@ -38,6 +38,14 @@ npx blackbar restore --map mapping.json < answer.txt
 | IP addresses (v4, v6)               | planned for v0.1    |
 | Names, postal addresses             | later (much harder) |
 
+Every match carries a `score` from 0 to 1. Checksum-validated formats score high (IBAN 0.95,
+card 0.9), pattern-only formats lower (e-mail 0.8, IP 0.7). Pass `minScore` to `detect` or
+`redact` to be stricter; by default every match is reported. The range is not checked: a
+`minScore` above 1 drops every match. When matches overlap, the longer span wins, then the
+higher score, then the earlier one, so a short match never leaves part of a longer one in the
+text. A custom detector that leaves out `score` gets 1, so its matches are never dropped
+silently by any `minScore` up to 1.
+
 Every change is measured against a synthetic corpus (`test/corpus/`). CI blocks any change
 that lowers recall or precision. Current numbers are in each CI run's summary.
 

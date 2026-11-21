@@ -36,7 +36,7 @@ describe('cardDetector', () => {
   it('finds compact and grouped numbers with offsets', () => {
     const text = 'a 4111 1111 1111 1111 b';
     expect(cardDetector.find(text)).toEqual([
-      { type: 'CARD', start: 2, end: 21, value: '4111 1111 1111 1111' },
+      { type: 'CARD', start: 2, end: 21, value: '4111 1111 1111 1111', score: 0.9 },
     ]);
   });
   it('finds hyphenated numbers and keeps the trailing period outside', () => {
@@ -57,7 +57,7 @@ describe('cardDetector', () => {
   });
   it('finds a card after a short number', () => {
     expect(cardDetector.find('Order 12 4111111111111111')).toEqual([
-      { type: 'CARD', start: 9, end: 25, value: '4111111111111111' },
+      { type: 'CARD', start: 9, end: 25, value: '4111111111111111', score: 0.9 },
     ]);
   });
   it('finds a grouped card after a short number with the same separator', () => {
