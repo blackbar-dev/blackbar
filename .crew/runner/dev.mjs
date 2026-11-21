@@ -8,6 +8,7 @@
 //   ANTHROPIC_API_KEY
 //   CREW_MODEL       default claude-sonnet-5-5
 //   CREW_MAX_USD     spend cap for the agent in this run, default 3
+//   CREW_REVIEWER    optional: who reviews (from the show's sprint plan); stored as label review:<id>
 //   CREW_DRY_RUN=1   local test: reads the issue from CREW_ISSUE_FILE, writes nothing to GitHub
 import { execFileSync, spawnSync } from 'node:child_process';
 import { appendFileSync, existsSync, mkdirSync, readFileSync, rmSync } from 'node:fs';
@@ -78,6 +79,9 @@ const front = Object.fromEntries(
 );
 if (front.can_code !== 'true') fail(`${front.name ?? character} is not a coding character`);
 const persona = { name: front.name, role: front.role, email: front.git_email };
+const plannedReviewer = (process.env.CREW_REVIEWER ?? '').trim().toLowerCase();
+if (plannedReviewer && (!/^[a-z]+$/.test(plannedReviewer) || plannedReviewer === character))
+  fail(`Invalid reviewer "${plannedReviewer}" for ${character}`);
 
 // ---------- issue ----------
 const issue = dryRun
@@ -350,11 +354,13 @@ const sha = await commitFiles(gh, {
 summary(`Committed ${sha.slice(0, 7)} to \`${branch}\`.`);
 
 const header = `> 🎭 **${persona.name}** · ${persona.role}\n\n`;
-const footer = `\n\n---\nCloses #${issueNumber}\n\n<sub>Written by an AI character of OfficeLife, supervised by a human maintainer. Round ${round}/${MAX_ROUNDS} · [run](${runUrl}) · local checks: ${checkLine}</sub>`;
+// Real cost of this run, invisible in the rendered text. The show engine adds these up (Dieter's budget).
+const costTag = `<!-- crew-cost: ${(result?.total_cost_usd ?? 0).toFixed(4)} -->`;
+const footer = `\n\n---\nCloses #${issueNumber}\n\n<sub>Written by an AI character of OfficeLife, supervised by a human maintainer. Round ${round}/${MAX_ROUNDS} · [run](${runUrl}) · local checks: ${checkLine}</sub>\n${costTag}`;
 
 if (pr) {
   await gh.post(`/repos/{repo}/issues/${pr.number}/comments`, {
-    body: `${header}Round ${round}: ${safeCommit.split('\n')[0]}\n\n<sub>[run](${runUrl}) · local checks: ${checkLine}</sub>`,
+    body: `${header}Round ${round}: ${safeCommit.split('\n')[0]}\n\n<sub>[run](${runUrl}) · local checks: ${checkLine}</sub>\n${costTag}`,
   });
   summary(`Updated PR #${pr.number}.`);
 } else {
@@ -366,7 +372,11 @@ if (pr) {
     maintainer_can_modify: true,
   });
   await gh.post(`/repos/{repo}/issues/${pr.number}/labels`, {
-    labels: ['crew', `crew:${character}`],
+    labels: [
+      'crew',
+      `crew:${character}`,
+      ...(plannedReviewer ? [`review:${plannedReviewer}`] : []),
+    ],
   });
   summary(`Opened PR #${pr.number}: ${pr.html_url}`);
 }

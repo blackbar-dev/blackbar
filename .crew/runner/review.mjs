@@ -6,7 +6,7 @@
 //
 // Env:
 //   CREW_REPO, CREW_PR       repo and PR number
-//   CREW_REVIEWER            optional: persona to use (default: picked by rotation)
+//   CREW_REVIEWER            optional: persona to use (default: label review:<id> from the sprint plan, else rotation)
 //   GH_TOKEN                 GitHub App installation token
 //   ANTHROPIC_API_KEY
 //   CREW_MODEL               default claude-sonnet-5-5
@@ -114,7 +114,11 @@ for (let page = 1; ; page++) {
   if (batch.length < 100) break;
 }
 const touchesBankFormats = files.some((f) => /iban|locales\/de|tax|steuer/i.test(f.filename));
-let reviewerId = process.env.CREW_REVIEWER || undefined;
+// 1) chosen by hand, 2) planned by the show (label review:<id>, set by crew-dev), 3) rotation
+let reviewerId =
+  process.env.CREW_REVIEWER ||
+  labels.find((l) => /^review:[a-z]+$/.test(l))?.slice('review:'.length) ||
+  undefined;
 if (!reviewerId) {
   const pool = (touchesBankFormats ? ['dieter', 'ingrid'] : ['ingrid', 'kevin', 'vale']).filter(
     (id) => id !== authorId,
@@ -259,7 +263,7 @@ for (const c of review.comments) {
 const approved = review.verdict === 'approve';
 const body = `> 🎭 **${reviewer.name}** · ${reviewer.role}\n\n${review.summary}${
   loose.length ? `\n\n${loose.join('\n')}` : ''
-}\n\n<sub>${approved ? '✅ Approved' : '🔁 Changes requested'} by an AI character of OfficeLife · [run](${runUrl})</sub>`;
+}\n\n<sub>${approved ? '✅ Approved' : '🔁 Changes requested'} by an AI character of OfficeLife · [run](${runUrl})</sub>\n<!-- crew-cost: ${(result.total_cost_usd ?? 0).toFixed(4)} -->`;
 
 if (dryRun) {
   console.log(`\n${body}\n\nInline:\n${JSON.stringify(inline, null, 2)}`);
