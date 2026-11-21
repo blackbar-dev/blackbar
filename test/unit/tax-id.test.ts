@@ -71,6 +71,26 @@ describe('taxIdDetector', () => {
     expect(values('+49 30 47 152 039 646')).toEqual([]);
     expect(values('47 152 039 646 7')).toEqual([]);
     expect(values('9/47/152/039/646')).toEqual([]);
+    expect(values('+49 30 47 152 039 646')).toEqual([]);
+  });
+  it('finds a compact ID next to other numbers', () => {
+    expect(values('Kind 1 47152039646')).toEqual(['47152039646']);
+    expect(values('47152039646 2024')).toEqual(['47152039646']);
+    expect(values('2/47152039646/3')).toEqual(['47152039646']);
+  });
+  it('accepts no-break spaces as group separators', () => {
+    expect(values('29 381 075 632 and 64 028 193 529')).toEqual([
+      '29 381 075 632',
+      '64 028 193 529',
+    ]);
+    expect(values('29 381 075 632')).toEqual([]);
+  });
+  it('accepts full-width digits and checks them like ASCII digits', () => {
+    const fw = (s: string) => s.replace(/\d/g, (d) => String.fromCharCode(0xff10 + Number(d)));
+    expect(values(fw('47152039646'))).toEqual([fw('47152039646')]);
+    expect(values(fw('29 381 075 632'))).toEqual([fw('29 381 075 632')]);
+    expect(values(fw('47152039647'))).toEqual([]);
+    expect(values(fw('0') + fw('47152039646'))).toEqual([]);
   });
 });
 

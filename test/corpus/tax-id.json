@@ -81,5 +81,48 @@
     "id": "tax-id-016",
     "text": "Steuernummer 21/815/08150 ist keine IdNr",
     "expected": []
+  },
+  {
+    "id": "tax-id-017",
+    "text": "Kind 1 47152039646 Kind 2 29381075632",
+    "expected": [
+      { "type": "TAX_ID", "value": "47152039646" },
+      { "type": "TAX_ID", "value": "29381075632" }
+    ]
+  },
+  {
+    "id": "tax-id-018",
+    "text": "IdNr 47152039646 2024 eingereicht",
+    "expected": [{ "type": "TAX_ID", "value": "47152039646" }]
+  },
+  {
+    "id": "tax-id-019",
+    "text": "Aus Word kopiert (no-break space): 29 381 075 632.",
+    "expected": [{ "type": "TAX_ID", "value": "29 381 075 632" }]
+  },
+  {
+    "id": "tax-id-020",
+    "text": "Aus PDF kopiert (narrow no-break space): 64 028 193 529",
+    "expected": [{ "type": "TAX_ID", "value": "64 028 193 529" }]
+  },
+  {
+    "id": "tax-id-021",
+    "text": "Full-width digits: ４７１５２０３９６４６",
+    "expected": [
+      {
+        "type": "TAX_ID",
+        "value": "４７１５２０３９６４６"
+      }
+    ]
+  },
+  {
+    "id": "tax-id-022",
+    "text": "Telefon +49 30 47 152 039 646",
+    "expected": []
+  },
+  {
+    "id": "tax-id-023",
+    "text": "Full-width, wrong check digit: ４７１５２０３９６４７",
+    "expected": []
   }
 ]

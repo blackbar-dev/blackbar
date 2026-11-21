@@ -1,12 +1,28 @@
 import type { Detector, Match } from '../core/types.js';
 
 // German tax ID (Steuerliche Identifikationsnummer): 11 digits, first digit not 0, written compact
-// or in 2-3-3-3 groups with ONE kind of separator (space or slash; backreference \1 rules out
-// "47 152/039 646"). The lookarounds keep us out of longer digit runs and glued words, including
-// one more digit group with a separator ("030 47 152 039 646"), so phone numbers and longer
-// reference numbers are not cut into a tax ID.
+// or in 2-3-3-3 groups with ONE kind of separator (backreference \1 rules out "47 152/039 646").
+// Digits may be ASCII or full-width (U+FF10-FF19, from CJK input or PDF copy-paste); separators are
+// space, slash, no-break space (U+00A0, Word) or narrow no-break space (U+202F, PDF).
+// Both forms stay out of longer digit runs and glued words. Only the grouped form also refuses one
+// more digit group with a separator next to it ("030 47 152 039 646"), so phone numbers are not
+// cut into a tax ID. The compact form does not need that: 11 digits without leading 0 plus check
+// digit are specific enough, and "Kind 1 47152039646" must still be redacted.
 // TODO(#18): once hint words land, add "Steuer-ID", "IdNr", "Identifikationsnummer", "tax id".
-const CANDIDATE = /(?<!\w|\d[ /])[1-9]\d([ /]?)\d{3}\1\d{3}\1\d{3}(?!\w|[ /]\d)/g;
+const D = '[0-9\\uFF10-\\uFF19]';
+const D1 = '[1-9\\uFF11-\\uFF19]';
+const SEP = '[ /\\u00A0\\u202F]';
+const EDGE = '[\\w\\uFF10-\\uFF19]';
+const COMPACT = `(?<!${EDGE})${D1}${D}{10}(?!${EDGE})`;
+const GROUPED = `(?<!${EDGE}|${D}${SEP})${D1}${D}(${SEP})${D}{3}\\1${D}{3}\\1${D}{3}(?!${EDGE}|${SEP}${D})`;
+const CANDIDATE = new RegExp(`${COMPACT}|${GROUPED}`, 'g');
+
+/** Full-width digits to ASCII, separators dropped, so the checks below see plain "0-9". */
+function toAsciiDigits(candidate: string): string {
+  return candidate
+    .replace(/[０-９]/g, (d) => String.fromCharCode(d.charCodeAt(0) - 0xff10 + 48))
+    .replace(/[^0-9]/g, '');
+}
 
 // Check digit plus the BZSt digit-frequency rule. The check digit alone passes 1 in 10 random
 // numbers, the frequency rule removes most of the rest, but it is still weaker than IBAN mod 97
@@ -50,7 +66,7 @@ export const taxIdDetector: Detector = {
   find(text: string): Match[] {
     const matches: Match[] = [];
     for (const m of text.matchAll(CANDIDATE)) {
-      if (!isValidTaxId(m[0].replace(/[ /]/g, ''))) continue;
+      if (!isValidTaxId(toAsciiDigits(m[0]))) continue;
       matches.push({
         type: 'TAX_ID',
         start: m.index,
