@@ -3,7 +3,7 @@ import type { EntityType } from './types.js';
 /** Maps placeholder tokens such as `[EMAIL_1]` back to the original values. */
 export type Mapping = Record<string, string>;
 
-export const TOKEN_PATTERN = /\[(EMAIL|PHONE|IBAN|CARD|IP|URL|MAC)_(\d+)\]/g;
+export const TOKEN_PATTERN = /\[(EMAIL|PHONE|IBAN|CARD|IP|URL|MAC|TAX_ID)_(\d+)\]/g;
 
 /**
  * Hands out stable placeholder tokens: the same value always gets the same token

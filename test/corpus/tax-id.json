@@ -1,0 +1,280 @@
+[
+  {
+    "id": "tax-id-001",
+    "text": "Steuer-ID: 47152039646 bitte an die Lohnbuchhaltung.",
+    "expected": [
+      {
+        "type": "TAX_ID",
+        "value": "47152039646"
+      }
+    ]
+  },
+  {
+    "id": "tax-id-002",
+    "text": "Meine IdNr lautet 29 381 075 632.",
+    "expected": [
+      {
+        "type": "TAX_ID",
+        "value": "29 381 075 632"
+      }
+    ]
+  },
+  {
+    "id": "tax-id-003",
+    "text": "Identifikationsnummer 51/705/825/936 (siehe Lohnsteuerbescheinigung)",
+    "expected": [
+      {
+        "type": "TAX_ID",
+        "value": "51/705/825/936"
+      }
+    ]
+  },
+  {
+    "id": "tax-id-004",
+    "text": "HR ticket: new hire tax id 64028193529, start date in January",
+    "expected": [
+      {
+        "type": "TAX_ID",
+        "value": "64028193529"
+      }
+    ]
+  },
+  {
+    "id": "tax-id-005",
+    "text": "Check digit zero: 47152039620",
+    "expected": [
+      {
+        "type": "TAX_ID",
+        "value": "47152039620"
+      }
+    ]
+  },
+  {
+    "id": "tax-id-006",
+    "text": "Zwei Kinder: 29381075632 und 64 028 193 529",
+    "expected": [
+      {
+        "type": "TAX_ID",
+        "value": "29381075632"
+      },
+      {
+        "type": "TAX_ID",
+        "value": "64 028 193 529"
+      }
+    ]
+  },
+  {
+    "id": "tax-id-007",
+    "text": "Tippfehler im Formular: 47152039647 (falsche Prüfziffer)",
+    "expected": []
+  },
+  {
+    "id": "tax-id-008",
+    "text": "Wrong check digit 29 381 075 631 is rejected",
+    "expected": []
+  },
+  {
+    "id": "tax-id-009",
+    "text": "Bestellnummer 12345678903 wurde versandt.",
+    "expected": []
+  },
+  {
+    "id": "tax-id-010",
+    "text": "Ruf mich an: 030 1234567 oder 0171 2345678",
+    "expected": []
+  },
+  {
+    "id": "tax-id-011",
+    "text": "Mobil 01234567888 nach 18 Uhr",
+    "expected": []
+  },
+  {
+    "id": "tax-id-012",
+    "text": "Referenz 55501234786 aus dem Altsystem",
+    "expected": []
+  },
+  {
+    "id": "tax-id-013",
+    "text": "Vorgang 471520396461 und Kunde X47152039646 sind keine IDs",
+    "expected": []
+  },
+  {
+    "id": "tax-id-014",
+    "text": "Mixed separators 47 152/039 646 do not count",
+    "expected": []
+  },
+  {
+    "id": "tax-id-015",
+    "text": "Telefon +49 30 47 152 039 646",
+    "expected": [
+      {
+        "type": "TAX_ID",
+        "value": "47 152 039 646"
+      }
+    ]
+  },
+  {
+    "id": "tax-id-016",
+    "text": "Steuernummer 21/815/08150 ist keine IdNr",
+    "expected": []
+  },
+  {
+    "id": "tax-id-017",
+    "text": "Kind 1 47152039646 Kind 2 29381075632",
+    "expected": [
+      {
+        "type": "TAX_ID",
+        "value": "47152039646"
+      },
+      {
+        "type": "TAX_ID",
+        "value": "29381075632"
+      }
+    ]
+  },
+  {
+    "id": "tax-id-018",
+    "text": "IdNr 47152039646 2024 eingereicht",
+    "expected": [
+      {
+        "type": "TAX_ID",
+        "value": "47152039646"
+      }
+    ]
+  },
+  {
+    "id": "tax-id-019",
+    "text": "Aus Word kopiert (no-break space): 29\u00A0381\u00A0075\u00A0632.",
+    "expected": [
+      {
+        "type": "TAX_ID",
+        "value": "29\u00A0381\u00A0075\u00A0632"
+      }
+    ]
+  },
+  {
+    "id": "tax-id-020",
+    "text": "Aus PDF kopiert (narrow no-break space): 64\u202F028\u202F193\u202F529",
+    "expected": [
+      {
+        "type": "TAX_ID",
+        "value": "64\u202F028\u202F193\u202F529"
+      }
+    ]
+  },
+  {
+    "id": "tax-id-021",
+    "text": "Full-width digits: ４７１５２０３９６４６",
+    "expected": [
+      {
+        "type": "TAX_ID",
+        "value": "４７１５２０３９６４６"
+      }
+    ]
+  },
+  {
+    "id": "tax-id-022",
+    "text": "Telefon +49\u00A030\u00A047\u00A0152\u00A0039\u00A0646",
+    "expected": [
+      {
+        "type": "TAX_ID",
+        "value": "47\u00A0152\u00A0039\u00A0646"
+      }
+    ]
+  },
+  {
+    "id": "tax-id-023",
+    "text": "Full-width, wrong check digit: ４７１５２０３９６４７",
+    "expected": []
+  },
+  {
+    "id": "tax-id-024",
+    "text": "Kind 2 29 381 075 632",
+    "expected": [
+      {
+        "type": "TAX_ID",
+        "value": "29 381 075 632"
+      }
+    ]
+  },
+  {
+    "id": "tax-id-025",
+    "text": "IdNr 29 381 075 632 2024 eingereicht",
+    "expected": [
+      {
+        "type": "TAX_ID",
+        "value": "29 381 075 632"
+      }
+    ]
+  },
+  {
+    "id": "tax-id-026",
+    "text": "Akte 1/29/381/075/632",
+    "expected": [
+      {
+        "type": "TAX_ID",
+        "value": "29/381/075/632"
+      }
+    ]
+  },
+  {
+    "id": "tax-id-027",
+    "text": "Server 34.150.216.173 antwortet nicht",
+    "expected": [
+      {
+        "type": "IP",
+        "value": "34.150.216.173"
+      }
+    ]
+  },
+  {
+    "id": "tax-id-028",
+    "text": "IdNr 29-381-075-632",
+    "expected": [
+      {
+        "type": "TAX_ID",
+        "value": "29-381-075-632"
+      }
+    ]
+  },
+  {
+    "id": "tax-id-029",
+    "text": "Tel 0221 29 381 075 632",
+    "expected": [
+      {
+        "type": "TAX_ID",
+        "value": "29 381 075 632"
+      }
+    ]
+  },
+  {
+    "id": "tax-id-030",
+    "text": "Stand 01.05 29 381 075 632",
+    "expected": [
+      {
+        "type": "TAX_ID",
+        "value": "29 381 075 632"
+      }
+    ]
+  },
+  {
+    "id": "tax-id-031",
+    "text": "Anhang: Lohnsteuerbescheinigung_47152039646.pdf",
+    "expected": [
+      {
+        "type": "TAX_ID",
+        "value": "47152039646"
+      }
+    ]
+  },
+  {
+    "id": "tax-id-032",
+    "text": "IdNr: ２９\u3000３８１\u3000０７５\u3000６３２",
+    "expected": [
+      {
+        "type": "TAX_ID",
+        "value": "２９\u3000３８１\u3000０７５\u3000６３２"
+      }
+    ]
+  }
+]

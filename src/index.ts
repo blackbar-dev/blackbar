@@ -16,8 +16,10 @@ export {
   ibanDetector,
   ipDetector,
   macDetector,
+  taxIdDetector,
   urlDetector,
 } from './detectors/index.js';
 export { isValidIpv4, isValidIpv6 } from './detectors/ip.js';
 export { isUsableMac } from './detectors/mac.js';
+export { isValidTaxId } from './detectors/tax-id.js';
 export { hasKnownTld } from './detectors/url.js';
