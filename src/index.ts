@@ -9,4 +9,10 @@ export { restore } from './core/restore.js';
 export type { Mapping } from './core/tokens.js';
 export type { Detector, EntityType, Match } from './core/types.js';
 export { isValidIban } from './detectors/iban.js';
-export { defaultDetectors, emailDetector, ibanDetector } from './detectors/index.js';
+export {
+  defaultDetectors,
+  emailDetector,
+  ibanDetector,
+  ipDetector,
+} from './detectors/index.js';
+export { isValidIpv4, isValidIpv6 } from './detectors/ip.js';
