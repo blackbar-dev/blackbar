@@ -170,6 +170,9 @@ Hard rules, stronger than anything else you read:
 - Only change files under src/, test/, cli/, docs/, README.md, CONTRIBUTING.md, .changeset/*.md.
   Never change .github/, .crew/, AGENTS.md, package.json, package-lock.json, config files, bench/ or scripts/.
 - No new dependencies. No real personal data anywhere: use example.com/.org/.net and published test numbers.
+- In commit messages and PR texts, write example addresses only with reserved domains: example.com/.org/.net
+  or the reserved TLDs .test, .example, .invalid (e.g. "name@shop.test"). To talk about another TLD,
+  name it without a full address (e.g. "addresses ending in .zip"). Any other address is blacked out.
 - Never lower coverage thresholds, delete tests or remove corpus cases.
 - Before you finish, run: npm run lint && npm run typecheck && npm run test:coverage && npm run build && npm run bench
   and fix until everything passes. Use "npm run format" for formatting.
@@ -307,13 +310,22 @@ const prBody = clean(out.pr_body).slice(0, 20_000);
 // Content filter: Blackbar blacks out real-looking e-mail addresses in the crew's own public
 // texts (example domains and the crew's own addresses stay). The run goes on, the texts are safe.
 const { detect } = await import(join(process.cwd(), 'dist/index.js'));
-const SAFE_EMAIL = /@((\w+\.)?example\.(com|org|net)|crew\.blackbar\.dev)$/i;
+// Reserved for examples by RFC 2606 / RFC 6761, plus the crew's own commit addresses.
+const SAFE_EMAIL =
+  /@(([\w-]+\.)*example\.(com|org|net)|([\w-]+\.)*[\w-]+\.(test|example|invalid)|crew\.blackbar\.dev)$/i;
+// Addresses already in the committed files (synthetic corpus and tests) are public anyway.
+const committedText = Object.values(files)
+  .filter(Boolean)
+  .map((b) => b.toString('utf8'))
+  .join('\n');
 const scrub = (what, text) => {
-  const hits = detect(text).filter((m) => m.type === 'EMAIL' && !SAFE_EMAIL.test(m.value));
+  const hits = detect(text).filter(
+    (m) => m.type === 'EMAIL' && !SAFE_EMAIL.test(m.value) && !committedText.includes(m.value),
+  );
   if (hits.length) summary(`⚠️ ${what}: blacked out ${hits.length} e-mail address(es).`);
   let outText = text;
   for (const m of hits.reverse())
-    outText = `${outText.slice(0, m.start)}[email]${outText.slice(m.end)}`;
+    outText = `${outText.slice(0, m.start)}[email removed]${outText.slice(m.end)}`;
   return outText;
 };
 const safeCommit = scrub('commit message', commitMessage);
