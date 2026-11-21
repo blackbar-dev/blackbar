@@ -68,8 +68,8 @@ jobs:
           CREW_ISSUE: ${{ inputs.issue || github.event.client_payload.issue }}
           CREW_CHARACTER: ${{ inputs.character || github.event.client_payload.character }}
           CREW_REVIEWER: ${{ (inputs.reviewer != 'auto' && inputs.reviewer) || github.event.client_payload.reviewer || '' }}
-          CREW_MODEL: ${{ vars.CREW_MODEL || 'claude-sonnet-5-5' }}
-          CREW_MAX_USD: ${{ vars.CREW_MAX_USD_PER_RUN || '3' }}
+          CREW_MODEL: ${{ vars.CREW_DEV_MODEL || vars.CREW_MODEL || 'claude-opus-5-5' }}
+          CREW_MAX_USD: ${{ vars.CREW_MAX_USD_PER_RUN || '8' }}
           GH_TOKEN: ${{ steps.app.outputs.token }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: node .crew/runner/dev.mjs

@@ -70,7 +70,8 @@ jobs:
           CREW_REPO: ${{ github.repository }}
           CREW_PR: ${{ inputs.pr || github.event.workflow_run.pull_requests[0].number }}
           CREW_REVIEWER: ${{ inputs.reviewer != 'rotation' && inputs.reviewer || '' }}
-          CREW_MODEL: ${{ vars.CREW_MODEL || 'claude-sonnet-5-5' }}
+          CREW_MODEL: ${{ vars.CREW_REVIEW_MODEL || vars.CREW_MODEL || 'claude-opus-5-5' }}
+          CREW_MAX_USD: ${{ vars.CREW_MAX_USD_PER_REVIEW || '1.5' }}
           CREW_AUTO_MERGE: ${{ vars.CREW_AUTO_MERGE || 'false' }}
           GH_TOKEN: ${{ steps.app.outputs.token }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
