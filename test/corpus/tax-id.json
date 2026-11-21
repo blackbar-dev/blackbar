@@ -256,5 +256,25 @@
         "value": "29 381 075 632"
       }
     ]
+  },
+  {
+    "id": "tax-id-031",
+    "text": "Anhang: Lohnsteuerbescheinigung_47152039646.pdf",
+    "expected": [
+      {
+        "type": "TAX_ID",
+        "value": "47152039646"
+      }
+    ]
+  },
+  {
+    "id": "tax-id-032",
+    "text": "IdNr: ２９\u3000３８１\u3000０７５\u3000６３２",
+    "expected": [
+      {
+        "type": "TAX_ID",
+        "value": "２９\u3000３８１\u3000０７５\u3000６３２"
+      }
+    ]
   }
 ]
