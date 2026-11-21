@@ -304,17 +304,25 @@ const commitMessage = clean(out.commit_message).slice(0, 2000);
 const prTitle = clean(out.pr_title).split('\n')[0].slice(0, 120);
 const prBody = clean(out.pr_body).slice(0, 20_000);
 
-// Content filter: Blackbar checks the crew's own public texts for real-looking personal data.
+// Content filter: Blackbar blacks out real-looking e-mail addresses in the crew's own public
+// texts (example domains and the crew's own addresses stay). The run goes on, the texts are safe.
 const { detect } = await import(join(process.cwd(), 'dist/index.js'));
-const SAFE_EMAIL = /@(example\.(com|org|net)|crew\.blackbar\.dev)$/i;
-for (const [what, text] of Object.entries({ commitMessage, prTitle, prBody })) {
-  const leaks = detect(text).filter((m) => m.type === 'EMAIL' && !SAFE_EMAIL.test(m.value));
-  if (leaks.length) fail(`${what} contains a non-example e-mail address. Nothing was pushed.`);
-}
+const SAFE_EMAIL = /@((\w+\.)?example\.(com|org|net)|crew\.blackbar\.dev)$/i;
+const scrub = (what, text) => {
+  const hits = detect(text).filter((m) => m.type === 'EMAIL' && !SAFE_EMAIL.test(m.value));
+  if (hits.length) summary(`⚠️ ${what}: blacked out ${hits.length} e-mail address(es).`);
+  let outText = text;
+  for (const m of hits.reverse())
+    outText = `${outText.slice(0, m.start)}[email]${outText.slice(m.end)}`;
+  return outText;
+};
+const safeCommit = scrub('commit message', commitMessage);
+const safeTitle = scrub('PR title', prTitle);
+const safeBody = scrub('PR body', prBody);
 
 if (dryRun) {
   summary(
-    `\nDry run. Would commit to ${branch}:\n${changed.join('\n')}\n\n${commitMessage}\n\nPR: ${prTitle}`,
+    `\nDry run. Would commit to ${branch}:\n${changed.join('\n')}\n\n${safeCommit}\n\nPR: ${safeTitle}`,
   );
   process.exit(checks.every((c) => c.ok) ? 0 : 1);
 }
@@ -323,7 +331,7 @@ if (dryRun) {
 const sha = await commitFiles(gh, {
   branch,
   baseSha,
-  message: `${commitMessage}\n\nRefs #${issueNumber}`,
+  message: `${safeCommit}\n\nRefs #${issueNumber}`,
   author: { name: persona.name, email: persona.email },
   files,
 });
@@ -334,15 +342,15 @@ const footer = `\n\n---\nCloses #${issueNumber}\n\n<sub>Written by an AI charact
 
 if (pr) {
   await gh.post(`/repos/{repo}/issues/${pr.number}/comments`, {
-    body: `${header}Round ${round}: ${commitMessage.split('\n')[0]}\n\n<sub>[run](${runUrl}) · local checks: ${checkLine}</sub>`,
+    body: `${header}Round ${round}: ${safeCommit.split('\n')[0]}\n\n<sub>[run](${runUrl}) · local checks: ${checkLine}</sub>`,
   });
   summary(`Updated PR #${pr.number}.`);
 } else {
   pr = await gh.post('/repos/{repo}/pulls', {
-    title: prTitle,
+    title: safeTitle,
     head: branch,
     base: 'main',
-    body: header + prBody + footer,
+    body: header + safeBody + footer,
     maintainer_can_modify: true,
   });
   await gh.post(`/repos/{repo}/issues/${pr.number}/labels`, {
