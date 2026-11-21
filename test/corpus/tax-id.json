@@ -219,11 +219,11 @@
   },
   {
     "id": "tax-id-027",
-    "text": "IdNr 29.381.075.632",
+    "text": "Server 34.150.216.173 antwortet nicht",
     "expected": [
       {
-        "type": "TAX_ID",
-        "value": "29.381.075.632"
+        "type": "IP",
+        "value": "34.150.216.173"
       }
     ]
   },

@@ -81,9 +81,9 @@ describe('taxIdDetector', () => {
     expect(scores('Kind 2 47 152 039 646')).toEqual([['47 152 039 646', 0.6]]);
     expect(scores('IdNr 47 152 039 646')).toEqual([['47 152 039 646', 0.85]]);
   });
-  it('accepts dots and hyphens as group separators', () => {
-    expect(values('47.152.039.646 47-152-039-646')).toEqual(['47.152.039.646', '47-152-039-646']);
-    expect(values('47.152-039 646')).toEqual([]);
+  it('accepts hyphens but not dots as group separators', () => {
+    expect(values('47-152-039-646')).toEqual(['47-152-039-646']);
+    expect(values('47.152.039.646 34.150.216.173 47-152-039 646')).toEqual([]);
   });
   it('finds a compact ID next to other numbers', () => {
     expect(values('Kind 1 47152039646')).toEqual(['47152039646']);

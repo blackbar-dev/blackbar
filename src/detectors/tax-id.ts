@@ -3,7 +3,7 @@ import type { Detector, Match } from '../core/types.js';
 // German tax ID (Steuerliche Identifikationsnummer): 11 digits, first digit not 0, written compact
 // or in 2-3-3-3 groups with ONE kind of separator (backreference \1 rules out "47 152/039 646").
 // Digits may be ASCII or full-width (U+FF10-FF19, from CJK input or PDF copy-paste); separators are
-// space, slash, dot, hyphen, no-break space (U+00A0, Word) or narrow no-break space (U+202F, PDF).
+// space, slash, hyphen, no-break space (U+00A0, Word) or narrow no-break space (U+202F, PDF).
 // Both forms stay out of longer digit runs and glued words. A grouped ID next to another digit
 // group ("Kind 2 29 381 075 632", "1/29/381/075/632", "+49 30 47 152 039 646") is still redacted,
 // with a lower score, so no number in front or behind can hide it. Phone numbers that happen to
@@ -12,7 +12,7 @@ import type { Detector, Match } from '../core/types.js';
 // TODO(#18): once hint words land, add "Steuer-ID", "IdNr", "Identifikationsnummer", "tax id".
 const D = '[0-9\\uFF10-\\uFF19]';
 const D1 = '[1-9\\uFF11-\\uFF19]';
-const SEP = '[ /.\\-\\u00A0\\u202F]';
+const SEP = '[ /\\-\\u00A0\\u202F]';
 const EDGE = '[\\w\\uFF10-\\uFF19]';
 const COMPACT = `(?<!${EDGE})${D1}${D}{10}(?!${EDGE})`;
 const GROUPED = `(?<!${EDGE})${D1}${D}(${SEP})${D}{3}\\1${D}{3}\\1${D}{3}(?!${EDGE})`;
