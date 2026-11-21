@@ -9,7 +9,8 @@
 //   CREW_REVIEWER            optional: persona to use (default: label review:<id> from the sprint plan, else rotation)
 //   GH_TOKEN                 GitHub App installation token
 //   ANTHROPIC_API_KEY
-//   CREW_MODEL               default claude-sonnet-5-5
+//   CREW_MODEL               default claude-opus-5-5
+//   CREW_MAX_USD             spend cap for one review, default 1.5
 //   CREW_DRY_RUN=1           local test: prints the review, writes nothing
 import { appendFileSync, existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -28,7 +29,8 @@ const env = (name, fallback) => {
 const dryRun = process.env.CREW_DRY_RUN === '1';
 const repo = env('CREW_REPO', 'blackbar-dev/blackbar');
 const prNumber = Number(env('CREW_PR'));
-const model = env('CREW_MODEL', 'claude-sonnet-5-5');
+const model = env('CREW_MODEL', 'claude-opus-5-5');
+const maxUsd = Number(env('CREW_MAX_USD', '1.5'));
 const runUrl = process.env.GITHUB_RUN_ID
   ? `${process.env.GITHUB_SERVER_URL}/${repo}/actions/runs/${process.env.GITHUB_RUN_ID}`
   : 'local run';
@@ -220,7 +222,7 @@ for await (const msg of query({
     tools: [],
     permissionMode: 'dontAsk',
     maxTurns: 4,
-    maxBudgetUsd: 0.6,
+    maxBudgetUsd: maxUsd,
     outputFormat: { type: 'json_schema', schema },
   },
 })) {

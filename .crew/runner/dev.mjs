@@ -6,8 +6,8 @@
 //   CREW_CHARACTER   persona file name in .crew/personas (e.g. kevin)
 //   GH_TOKEN         GitHub App installation token (never handed to the agent)
 //   ANTHROPIC_API_KEY
-//   CREW_MODEL       default claude-sonnet-5-5
-//   CREW_MAX_USD     spend cap for the agent in this run, default 3
+//   CREW_MODEL       default claude-opus-5-5
+//   CREW_MAX_USD     spend cap for the agent in this run, default 8
 //   CREW_REVIEWER    optional: who reviews (from the show's sprint plan); stored as label review:<id>
 //   CREW_DRY_RUN=1   local test: reads the issue from CREW_ISSUE_FILE, writes nothing to GitHub
 import { execFileSync, spawnSync } from 'node:child_process';
@@ -50,8 +50,8 @@ const dryRun = process.env.CREW_DRY_RUN === '1';
 const repo = env('CREW_REPO', 'blackbar-dev/blackbar');
 const issueNumber = Number(env('CREW_ISSUE'));
 const character = env('CREW_CHARACTER').toLowerCase();
-const model = env('CREW_MODEL', 'claude-sonnet-5-5');
-const maxUsd = Number(env('CREW_MAX_USD', '3'));
+const model = env('CREW_MODEL', 'claude-opus-5-5');
+const maxUsd = Number(env('CREW_MAX_USD', '8'));
 const runUrl = process.env.GITHUB_RUN_ID
   ? `${process.env.GITHUB_SERVER_URL}/${repo}/actions/runs/${process.env.GITHUB_RUN_ID}`
   : 'local run';
