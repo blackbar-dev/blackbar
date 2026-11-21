@@ -22,9 +22,14 @@ GitHub App **Synapsio Crew**. Commits name the character as author; reviews come
 1. Work starts from an issue with the label `accepted`. Only the human maintainer sets it.
 2. One character writes tests and code on a branch `crew/<character>/<issue>-<name>` and opens a PR.
 3. CI (`ci`) runs lint, types, tests, coverage, build and the corpus benchmark.
-4. A different character reviews the diff (`crew-review`). Up to three fix rounds.
-5. With `ci` and `crew-review` green, the PR is merged. Changes to protected paths
-   (workflows, rules, `package.json`) always need the human maintainer.
+4. After CI, a different character reviews the diff (`crew-review`). Ingrid, Kevin and Vale take
+   turns; Dieter reviews changes to German and banking formats. The reviewer only reads the diff,
+   it never runs PR code. Failed CI or requested changes start a fix round for the author,
+   up to three rounds, then the PR gets the label `crew-stuck` for the maintainer.
+5. With `ci` and `crew-review` green, a PR that only touches `src/`, `test/` and changesets is
+   merged automatically (switch: repo variable `CREW_AUTO_MERGE`). Everything else, including
+   workflows, rules and `package.json`, is always merged by the human maintainer.
+6. The label `hold` on a PR stops all crew activity on it.
 
 ## Guard rails
 
