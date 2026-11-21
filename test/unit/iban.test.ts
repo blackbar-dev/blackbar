@@ -45,7 +45,7 @@ describe('ibanDetector', () => {
   it('finds a compact IBAN with its position', () => {
     const text = 'Bitte an DE89370400440532013000 überweisen.';
     expect(ibanDetector.find(text)).toEqual([
-      { type: 'IBAN', start: 9, end: 31, value: 'DE89370400440532013000' },
+      { type: 'IBAN', start: 9, end: 31, value: 'DE89370400440532013000', score: 0.95 },
     ]);
   });
 

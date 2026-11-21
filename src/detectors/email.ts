@@ -48,6 +48,10 @@ const FILE_EXTENSIONS = new Set([
   'wav',
 ]);
 
+// Pattern only, no checksum. The "@" plus a letter TLD is distinctive, but file names with an
+// extension missing from the list below still slip through.
+const SCORE = 0.8;
+
 function hasFileExtension(value: string): boolean {
   return FILE_EXTENSIONS.has(value.slice(value.lastIndexOf('.') + 1).toLowerCase());
 }
@@ -61,7 +65,13 @@ export const emailDetector: Detector = {
       const local = value.slice(0, value.indexOf('@'));
       if (local.length > 64 || value.length > 254) continue;
       if (hasFileExtension(value)) continue;
-      matches.push({ type: 'EMAIL', start: m.index, end: m.index + value.length, value });
+      matches.push({
+        type: 'EMAIL',
+        start: m.index,
+        end: m.index + value.length,
+        value,
+        score: SCORE,
+      });
     }
     return matches;
   },

@@ -1,5 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { type Detector, detect, redact, restore } from '../../src/index.js';
+import {
+  type DetectOptions,
+  type Detector,
+  detect,
+  type EntityType,
+  redact,
+  restore,
+} from '../../src/index.js';
 
 const TEXT =
   'Anna (anna@example.com) zahlt an DE89370400440532013000. Antwort an anna@example.com.';
@@ -30,6 +37,12 @@ describe('redact', () => {
   it('can be limited to some types', () => {
     expect(redact(TEXT, { types: ['IBAN'] }).text).toContain('anna@example.com');
   });
+
+  it('leaves matches below minScore in the text', () => {
+    expect(redact(TEXT, { minScore: 0.9 }).text).toBe(
+      'Anna (anna@example.com) zahlt an [IBAN_1]. Antwort an anna@example.com.',
+    );
+  });
 });
 
 describe('restore', () => {
@@ -55,15 +68,94 @@ describe('restore', () => {
 });
 
 describe('detect', () => {
-  it('keeps the longer match when two overlap', () => {
-    const short: Detector = {
+  // A detector that returns exactly the given spans, to test overlap resolution in isolation.
+  const fixed = (type: EntityType, ...spans: [number, number, number][]): Detector => ({
+    type,
+    find: (text) =>
+      spans.map(([start, end, score]) => ({
+        type,
+        start,
+        end,
+        value: text.slice(start, end),
+        score,
+      })),
+  });
+  const types = (text: string, options: DetectOptions) => detect(text, options).map((m) => m.type);
+
+  it('gives every built-in match a score between 0 and 1', () => {
+    const text = `${TEXT} Karte 4111 1111 1111 1111 von 192.0.2.1`;
+    const matches = detect(text);
+    expect(matches.map((m) => m.type)).toEqual(['EMAIL', 'IBAN', 'EMAIL', 'CARD', 'IP']);
+    for (const m of matches) {
+      expect(m.score).toBeGreaterThan(0);
+      expect(m.score).toBeLessThanOrEqual(1);
+    }
+  });
+
+  it('ranks checksum formats above pattern-only formats', () => {
+    const score = (text: string) => detect(text)[0]?.score ?? 0;
+    const iban = score('DE89370400440532013000');
+    const card = score('4111111111111111');
+    const email = score('anna@example.com');
+    const ip = score('192.0.2.1');
+    expect(iban).toBeGreaterThan(card);
+    expect(card).toBeGreaterThan(email);
+    expect(email).toBeGreaterThan(ip);
+  });
+
+  it('drops matches below minScore', () => {
+    const detectors = [fixed('IP', [0, 3, 0.3]), fixed('CARD', [4, 6, 0.9])];
+    expect(types('abc de', { detectors })).toEqual(['IP', 'CARD']);
+    expect(types('abc de', { detectors, minScore: 0.5 })).toEqual(['CARD']);
+  });
+
+  it('keeps a match whose score equals minScore', () => {
+    expect(types('abc', { detectors: [fixed('IP', [0, 3, 0.5])], minScore: 0.5 })).toEqual(['IP']);
+  });
+
+  it('reports every match by default, however low its score', () => {
+    expect(types('abc', { detectors: [fixed('IP', [0, 3, 0])] })).toEqual(['IP']);
+  });
+
+  it('treats a match without score as certain instead of dropping it', () => {
+    // Detector written before scores existed, or in plain JavaScript.
+    const legacy = {
       type: 'IP',
-      find: () => [{ type: 'IP', start: 0, end: 3, value: 'abc' }],
-    };
-    const long: Detector = {
-      type: 'CARD',
-      find: () => [{ type: 'CARD', start: 1, end: 6, value: 'bcdef' }],
-    };
-    expect(detect('abcdef', { detectors: [short, long] }).map((m) => m.type)).toEqual(['CARD']);
+      find: (text: string) => [{ type: 'IP', start: 0, end: 3, value: text.slice(0, 3) }],
+    } as unknown as Detector;
+    expect(detect('abc', { detectors: [legacy] })).toEqual([
+      { type: 'IP', start: 0, end: 3, value: 'abc', score: 1 },
+    ]);
+    expect(types('abc', { detectors: [legacy], minScore: 0.99 })).toEqual(['IP']);
+  });
+
+  it('drops every match when minScore is above 1', () => {
+    expect(detect(TEXT, { minScore: 1.01 })).toEqual([]);
+  });
+
+  it('reports every match when minScore is NaN', () => {
+    expect(types('abc', { detectors: [fixed('IP', [0, 3, 0.1])], minScore: Number.NaN })).toEqual([
+      'IP',
+    ]);
+  });
+
+  it('redacts the whole e-mail address when its local part is an IBAN', () => {
+    // Length before score: the shorter IBAN must not split the address and leave the domain.
+    expect(redact('DE89370400440532013000@example.com').text).toBe('[EMAIL_1]');
+  });
+
+  it('keeps the longer match when two overlap, even if it scores lower', () => {
+    const detectors = [fixed('IP', [0, 6, 0.5]), fixed('CARD', [1, 3, 0.9])];
+    expect(types('abcdef', { detectors })).toEqual(['IP']);
+  });
+
+  it('keeps the higher score when two overlap with equal length', () => {
+    const detectors = [fixed('IP', [0, 3, 0.5]), fixed('CARD', [1, 4, 0.9])];
+    expect(types('abcdef', { detectors })).toEqual(['CARD']);
+  });
+
+  it('keeps the earlier match when score and length are equal', () => {
+    const detectors = [fixed('CARD', [1, 4, 0.8]), fixed('IP', [0, 3, 0.8])];
+    expect(types('abcdef', { detectors })).toEqual(['IP']);
   });
 });

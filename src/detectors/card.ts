@@ -18,6 +18,9 @@ const ISSUERS: readonly { prefix: RegExp; lengths: readonly number[] }[] = [
   { prefix: /^(?:50|5[6-8]|6[0-9])/, lengths: [13, 14, 15, 16, 17, 18, 19] }, // Maestro
 ];
 
+// Issuer prefix plus Luhn. Luhn passes 1 in 10, weaker than mod 97, so a step below IBAN.
+const SCORE = 0.9;
+
 /** Luhn checksum: double every second digit from the right. */
 export function luhn(digits: string): boolean {
   let sum = 0;
@@ -70,6 +73,7 @@ export const cardDetector: Detector = {
           start: first.start,
           end: stop.end,
           value: text.slice(first.start, stop.end),
+          score: SCORE,
         });
         i = last + 1;
       }

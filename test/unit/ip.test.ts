@@ -45,7 +45,7 @@ describe('ipDetector', () => {
   });
   it('reports positions', () => {
     expect(ipDetector.find('at 192.0.2.10.')).toEqual([
-      { type: 'IP', start: 3, end: 13, value: '192.0.2.10' },
+      { type: 'IP', start: 3, end: 13, value: '192.0.2.10', score: 0.7 },
     ]);
   });
   it('reports a mapped address once, not its IPv4 tail again', () => {

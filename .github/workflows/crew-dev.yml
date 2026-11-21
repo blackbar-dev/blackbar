@@ -11,10 +11,10 @@ on:
         required: true
         type: number
       character:
-        description: Who programs
+        description: Who programs (kiki only on issues labelled "security")
         required: true
         type: choice
-        options: [vale, kevin, ingrid]
+        options: [vale, kevin, ingrid, kiki]
       reviewer:
         description: Who reviews (auto = rotation)
         required: false

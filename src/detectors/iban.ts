@@ -18,6 +18,9 @@ export const IBAN_LENGTHS: Readonly<Record<string, number>> = {
 const IBAN =
   /(?<![A-Za-z0-9])[A-Z]{2}\d{2}(?:[A-Za-z0-9]{11,30}|(?: [A-Za-z0-9]{4}){2,7}(?: [A-Za-z0-9]{1,4})?)(?![A-Za-z0-9])/g;
 
+// Country length plus mod 97: a random candidate passes about 1 in 97. Highest built-in score.
+const SCORE = 0.95;
+
 /** ISO 7064 MOD 97-10 check, as used by IBAN. */
 export function isValidIban(raw: string): boolean {
   const iban = raw.replace(/ /g, '').toUpperCase();
@@ -47,7 +50,14 @@ export const ibanDetector: Detector = {
         const cut = value.lastIndexOf(' ');
         value = cut > 0 ? value.slice(0, cut) : '';
       }
-      if (value) matches.push({ type: 'IBAN', start: m.index, end: m.index + value.length, value });
+      if (!value) continue;
+      matches.push({
+        type: 'IBAN',
+        start: m.index,
+        end: m.index + value.length,
+        value,
+        score: SCORE,
+      });
     }
     return matches;
   },

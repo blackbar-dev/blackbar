@@ -6,7 +6,7 @@ const values = (text: string) => emailDetector.find(text).map((m) => m.value);
 describe('emailDetector', () => {
   it('finds an address with its position', () => {
     expect(emailDetector.find('Mail an anna@example.com bitte')).toEqual([
-      { type: 'EMAIL', start: 8, end: 24, value: 'anna@example.com' },
+      { type: 'EMAIL', start: 8, end: 24, value: 'anna@example.com', score: 0.8 },
     ]);
   });
 

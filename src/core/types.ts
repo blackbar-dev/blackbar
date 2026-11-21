@@ -7,6 +7,8 @@ export interface Match {
   start: number;
   end: number;
   value: string;
+  /** Confidence from 0 to 1. Checksum-validated formats score high, pattern-only formats lower. */
+  score: number;
 }
 
 /** A detector finds one kind of personal data. One file per detector in src/detectors/. */
