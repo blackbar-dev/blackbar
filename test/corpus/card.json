@@ -1,0 +1,123 @@
+[
+  {
+    "id": "card-001",
+    "text": "Card 4111111111111111 on file.",
+    "expected": [{ "type": "CARD", "value": "4111111111111111" }]
+  },
+  {
+    "id": "card-002",
+    "text": "Pay with 4111 1111 1111 1111 please",
+    "expected": [{ "type": "CARD", "value": "4111 1111 1111 1111" }]
+  },
+  {
+    "id": "card-003",
+    "text": "number: 4111-1111-1111-1111.",
+    "expected": [{ "type": "CARD", "value": "4111-1111-1111-1111" }]
+  },
+  {
+    "id": "card-004",
+    "text": "Mastercard 5555 5555 5555 4444",
+    "expected": [{ "type": "CARD", "value": "5555 5555 5555 4444" }]
+  },
+  {
+    "id": "card-005",
+    "text": "Mastercard 2-series: 2223003122003222",
+    "expected": [{ "type": "CARD", "value": "2223003122003222" }]
+  },
+  {
+    "id": "card-006",
+    "text": "Amex 3782 822463 10005 expires soon",
+    "expected": [{ "type": "CARD", "value": "3782 822463 10005" }]
+  },
+  {
+    "id": "card-007",
+    "text": "Discover 6011111111111117",
+    "expected": [{ "type": "CARD", "value": "6011111111111117" }]
+  },
+  {
+    "id": "card-008",
+    "text": "JCB 3530-1113-3330-0000",
+    "expected": [{ "type": "CARD", "value": "3530-1113-3330-0000" }]
+  },
+  {
+    "id": "card-009",
+    "text": "Diners 30569309025904",
+    "expected": [{ "type": "CARD", "value": "30569309025904" }]
+  },
+  {
+    "id": "card-010",
+    "text": "Old 13-digit Visa 4222222222222 here",
+    "expected": [{ "type": "CARD", "value": "4222222222222" }]
+  },
+  {
+    "id": "card-011",
+    "text": "Maestro 6759649826438453",
+    "expected": [{ "type": "CARD", "value": "6759649826438453" }]
+  },
+  {
+    "id": "card-012",
+    "text": "first 4111111111111111, second 5105105105105100",
+    "expected": [
+      { "type": "CARD", "value": "4111111111111111" },
+      { "type": "CARD", "value": "5105105105105100" }
+    ]
+  },
+  {
+    "id": "card-101",
+    "text": "Order 1234567890123 shipped",
+    "expected": []
+  },
+  {
+    "id": "card-102",
+    "text": "Call +49 171 1234567 tomorrow",
+    "expected": []
+  },
+  {
+    "id": "card-103",
+    "text": "Timestamp 1700000000000 in ms",
+    "expected": []
+  },
+  {
+    "id": "card-104",
+    "text": "Luhn-valid but unknown issuer: 1234567812345670",
+    "expected": []
+  },
+  {
+    "id": "card-105",
+    "text": "Mixed separators 4111 1111-1111 1111",
+    "expected": []
+  },
+  {
+    "id": "card-106",
+    "text": "Bad checksum 4111111111111112",
+    "expected": []
+  },
+  {
+    "id": "card-107",
+    "text": "Too long, 20 digits: 41111111111111111111",
+    "expected": []
+  },
+  {
+    "id": "card-108",
+    "text": "Inside a longer run 94111111111111111",
+    "expected": []
+  },
+  {
+    "id": "card-109",
+    "text": "Date 2026-11-21 12:00:00",
+    "expected": []
+  },
+  {
+    "id": "card-012",
+    "text": "Two cards: 4111111111111111 5105105105105100 on file",
+    "expected": [
+      { "type": "CARD", "value": "4111111111111111" },
+      { "type": "CARD", "value": "5105105105105100" }
+    ]
+  },
+  {
+    "id": "card-013",
+    "text": "Order 12 4111111111111111 paid",
+    "expected": [{ "type": "CARD", "value": "4111111111111111" }]
+  }
+]

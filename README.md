@@ -34,7 +34,7 @@ npx blackbar restore --map mapping.json < answer.txt
 | E-mail addresses                    | ✅                  |
 | IBAN (with checksum, 80+ countries) | ✅                  |
 | Phone numbers                       | planned for v0.1    |
-| Credit card numbers (Luhn)          | planned for v0.1    |
+| Credit card numbers (Luhn)          | ✅                  |
 | IP addresses (v4, v6)               | planned for v0.1    |
 | Names, postal addresses             | later (much harder) |
 
