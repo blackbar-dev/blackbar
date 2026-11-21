@@ -1,0 +1,78 @@
+[
+  {
+    "id": "ip-001",
+    "text": "Server 192.0.2.10 is down.",
+    "expected": [{ "type": "IP", "value": "192.0.2.10" }]
+  },
+  {
+    "id": "ip-002",
+    "text": "Connect to 10.0.0.1:8080 now",
+    "expected": [{ "type": "IP", "value": "10.0.0.1" }]
+  },
+  {
+    "id": "ip-003",
+    "text": "allow 198.51.100.0/24 only",
+    "expected": [{ "type": "IP", "value": "198.51.100.0" }]
+  },
+  {
+    "id": "ip-004",
+    "text": "peer 203.0.113.255, then 203.0.113.1",
+    "expected": [
+      { "type": "IP", "value": "203.0.113.255" },
+      { "type": "IP", "value": "203.0.113.1" }
+    ]
+  },
+  {
+    "id": "ip-005",
+    "text": "Host 2001:db8::1 answers",
+    "expected": [{ "type": "IP", "value": "2001:db8::1" }]
+  },
+  {
+    "id": "ip-006",
+    "text": "full 2001:0db8:0000:0000:0000:0000:0000:0001 form",
+    "expected": [{ "type": "IP", "value": "2001:0db8:0000:0000:0000:0000:0000:0001" }]
+  },
+  {
+    "id": "ip-007",
+    "text": "Net 2001:db8::/32 routed",
+    "expected": [{ "type": "IP", "value": "2001:db8::" }]
+  },
+  {
+    "id": "ip-008",
+    "text": "mapped ::ffff:192.0.2.33 address",
+    "expected": [{ "type": "IP", "value": "::ffff:192.0.2.33" }]
+  },
+  {
+    "id": "ip-009",
+    "text": "[2001:db8::8a2e:370:7334]:443 listens",
+    "expected": [{ "type": "IP", "value": "2001:db8::8a2e:370:7334" }]
+  },
+  {
+    "id": "ip-010",
+    "text": "ip=198.51.100.7;",
+    "expected": [{ "type": "IP", "value": "198.51.100.7" }]
+  },
+  { "id": "ip-011", "text": "Loopback is ::1.", "expected": [{ "type": "IP", "value": "::1" }] },
+  {
+    "id": "ip-012",
+    "text": "Gateway (192.0.2.1) and 2001:db8:1:2:3:4:5:6.",
+    "expected": [
+      { "type": "IP", "value": "192.0.2.1" },
+      { "type": "IP", "value": "2001:db8:1:2:3:4:5:6" }
+    ]
+  },
+  { "id": "ip-013", "text": "Upgrade to v1.2.3.4 today", "expected": [] },
+  { "id": "ip-014", "text": "version 1.2.3.4.5 released", "expected": [] },
+  { "id": "ip-015", "text": "build 10.2.3.4.5", "expected": [] },
+  { "id": "ip-016", "text": "Octet too big 256.1.1.1", "expected": [] },
+  { "id": "ip-017", "text": "bad 192.0.2.300", "expected": [] },
+  { "id": "ip-018", "text": "leading zeros 192.0.02.1 and 01.2.3.4", "expected": [] },
+  { "id": "ip-019", "text": "Meeting at 12:30:45 sharp", "expected": [] },
+  { "id": "ip-020", "text": "Date 2026.11.21 and 21.11.2026", "expected": [] },
+  { "id": "ip-021", "text": "Ratio 3:1 and 10:00", "expected": [] },
+  { "id": "ip-022", "text": "std::vector is C++", "expected": [] },
+  { "id": "ip-023", "text": "two 2001:db8::1::2 colons", "expected": [] },
+  { "id": "ip-024", "text": "too many 2001:db8:1:2:3:4:5:6:7", "expected": [] },
+  { "id": "ip-025", "text": "bad group 2001:db8::12345 and 2001:dg8::1", "expected": [] },
+  { "id": "ip-026", "text": "price 1.5.2.3x", "expected": [] }
+]
