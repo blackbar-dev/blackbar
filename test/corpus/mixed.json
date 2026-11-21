@@ -33,11 +33,15 @@
   {
     "id": "mixed-006",
     "text": "pay at https://example.com/checkout?card=4111 1111 1111 1111 today",
-    "expected": [{ "type": "URL", "value": "https://example.com/checkout?card=4111 1111 1111 1111" }]
+    "expected": [
+      { "type": "URL", "value": "https://example.com/checkout?card=4111 1111 1111 1111" }
+    ]
   },
   {
     "id": "mixed-007",
     "text": "Pay to https://example.com/pay?iban=DE89 3704 0044 0532 0130 00 please",
-    "expected": [{ "type": "URL", "value": "https://example.com/pay?iban=DE89 3704 0044 0532 0130 00" }]
+    "expected": [
+      { "type": "URL", "value": "https://example.com/pay?iban=DE89 3704 0044 0532 0130 00" }
+    ]
   }
 ]
