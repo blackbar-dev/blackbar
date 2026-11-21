@@ -43,7 +43,8 @@ card 0.9), pattern-only formats lower (e-mail 0.8, IP 0.7). Pass `minScore` to `
 `redact` to be stricter; by default every match is reported. The range is not checked: a
 `minScore` above 1 drops every match. When matches overlap, the longer span wins, then the
 higher score, then the earlier one, so a short match never leaves part of a longer one in the
-text. A custom detector that leaves out `score` gets 1, so its matches are never dropped
+text. A match that only partly overlaps the winner is merged into it: the winner grows to cover
+both spans, so no part of either finding stays in the text. A custom detector that leaves out `score` gets 1, so its matches are never dropped
 silently by any `minScore` up to 1.
 
 Every change is measured against a synthetic corpus (`test/corpus/`). CI blocks any change
