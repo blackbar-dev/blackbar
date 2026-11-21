@@ -38,6 +38,13 @@ describe('restore', () => {
     expect(restore(text, mapping)).toBe(TEXT);
   });
 
+  it('round-trips URL and MAC tokens', () => {
+    const input = 'Profile https://example.com/u/anna, device 00:1a:2b:3c:4d:5e.';
+    const { text, mapping } = redact(input);
+    expect(text).toBe('Profile [URL_1], device [MAC_1].');
+    expect(restore(text, mapping)).toBe(input);
+  });
+
   it('leaves unknown tokens alone', () => {
     expect(restore('Hallo [EMAIL_7] und [NAME_1]', {})).toBe('Hallo [EMAIL_7] und [NAME_1]');
   });

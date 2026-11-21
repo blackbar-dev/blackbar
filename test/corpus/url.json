@@ -1,0 +1,110 @@
+[
+  {
+    "id": "url-001",
+    "text": "See https://example.com/profile/anna for details.",
+    "expected": [{ "type": "URL", "value": "https://example.com/profile/anna" }]
+  },
+  {
+    "id": "url-002",
+    "text": "Docs live at www.example.org.",
+    "expected": [{ "type": "URL", "value": "www.example.org" }]
+  },
+  {
+    "id": "url-003",
+    "text": "(mirror: ftp://ftp.example.net/pub/file.txt)",
+    "expected": [{ "type": "URL", "value": "ftp://ftp.example.net/pub/file.txt" }]
+  },
+  {
+    "id": "url-004",
+    "text": "Reset link: https://example.com/reset?token=abc123&user=42, valid for one hour.",
+    "expected": [{ "type": "URL", "value": "https://example.com/reset?token=abc123&user=42" }]
+  },
+  {
+    "id": "url-005",
+    "text": "Read https://en.example.org/wiki/Foo_(bar) today",
+    "expected": [{ "type": "URL", "value": "https://en.example.org/wiki/Foo_(bar)" }]
+  },
+  {
+    "id": "url-006",
+    "text": "Unsubscribe: https://example.com/unsub?email=anna@example.com",
+    "expected": [{ "type": "URL", "value": "https://example.com/unsub?email=anna@example.com" }]
+  },
+  {
+    "id": "url-007",
+    "text": "Dashboard at http://example.com:8080/admin!",
+    "expected": [{ "type": "URL", "value": "http://example.com:8080/admin" }]
+  },
+  {
+    "id": "url-008",
+    "text": "Visit HTTPS://WWW.EXAMPLE.COM/Path now",
+    "expected": [{ "type": "URL", "value": "HTTPS://WWW.EXAMPLE.COM/Path" }]
+  },
+  {
+    "id": "url-009",
+    "text": "My [profile](https://example.net/u/lena) is public.",
+    "expected": [{ "type": "URL", "value": "https://example.net/u/lena" }]
+  },
+  {
+    "id": "url-010",
+    "text": "Link: <https://example.com/a/b>",
+    "expected": [{ "type": "URL", "value": "https://example.com/a/b" }]
+  },
+  {
+    "id": "url-011",
+    "text": "Did you see https://example.org/page#top?",
+    "expected": [{ "type": "URL", "value": "https://example.org/page#top" }]
+  },
+  {
+    "id": "url-012",
+    "text": "Old www.example.de/team, new https://example.io/team.",
+    "expected": [
+      { "type": "URL", "value": "www.example.de/team" },
+      { "type": "URL", "value": "https://example.io/team" }
+    ]
+  },
+  {
+    "id": "url-013",
+    "text": "Version 1.2.3 is out, see the release notes.",
+    "expected": []
+  },
+  {
+    "id": "url-014",
+    "text": "The archive www.backup.tar.gz is on the share.",
+    "expected": []
+  },
+  {
+    "id": "url-015",
+    "text": "Started at 12:34:56 on http://localhost:3000",
+    "expected": []
+  },
+  {
+    "id": "url-016",
+    "text": "Typing https:// alone is not a link.",
+    "expected": []
+  },
+  {
+    "id": "url-017",
+    "text": "Open report.pdf and www_notes.txt from example folder.",
+    "expected": []
+  },
+  {
+    "id": "url-018",
+    "text": "Unknown suffix https://example.notatld/x stays.",
+    "expected": []
+  },
+  {
+    "id": "url-019",
+    "text": "Status page http://192.0.2.10/status is green.",
+    "expected": [{ "type": "IP", "value": "192.0.2.10" }]
+  },
+  {
+    "id": "url-020",
+    "text": "Write to anna@www.example.com please.",
+    "expected": [{ "type": "EMAIL", "value": "anna@www.example.com" }]
+  },
+  {
+    "id": "url-021",
+    "text": "Aww, awww.example.com is just a typo.",
+    "expected": []
+  }
+]

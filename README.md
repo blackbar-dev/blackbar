@@ -36,6 +36,8 @@ npx blackbar restore --map mapping.json < answer.txt
 | Phone numbers                       | planned for v0.1    |
 | Credit card numbers (Luhn)          | ✅                  |
 | IP addresses (v4, v6)               | planned for v0.1    |
+| URLs (http, https, ftp, www.)       | ✅                  |
+| MAC addresses                       | ✅                  |
 | Names, postal addresses             | later (much harder) |
 
 Every change is measured against a synthetic corpus (`test/corpus/`). CI blocks any change
