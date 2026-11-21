@@ -1,0 +1,38 @@
+[
+  {
+    "id": "hints-001",
+    "text": "Die IP-Adresse 1.2.3.4 ist gesperrt.",
+    "options": { "minScore": 0.8 },
+    "expected": [{ "type": "IP", "value": "1.2.3.4" }]
+  },
+  {
+    "id": "hints-002",
+    "text": "Login from ip address 198.51.100.7 failed",
+    "options": { "minScore": 0.8 },
+    "expected": [{ "type": "IP", "value": "198.51.100.7" }]
+  },
+  {
+    "id": "hints-003",
+    "text": "MAC-Adresse des Geräts: 00:1a:2b:3c:4d:5e",
+    "options": { "minScore": 0.8 },
+    "expected": [{ "type": "MAC", "value": "00:1a:2b:3c:4d:5e" }]
+  },
+  {
+    "id": "hints-004",
+    "text": "Geraet mit Hardware-Adresse 02-00-5e-10-00-01 im Netz",
+    "options": { "minScore": 0.8 },
+    "expected": [{ "type": "MAC", "value": "02-00-5e-10-00-01" }]
+  },
+  {
+    "id": "hints-005",
+    "text": "Router 203.0.113.9 neu starten",
+    "options": { "minScore": 0.8, "hints": { "IP": ["Router"] } },
+    "expected": [{ "type": "IP", "value": "203.0.113.9" }]
+  },
+  {
+    "id": "hints-006",
+    "text": "Bitte an die E-Mail-Adresse jonas@example.org schreiben.",
+    "options": { "minScore": 0.9 },
+    "expected": [{ "type": "EMAIL", "value": "jonas@example.org" }]
+  }
+]

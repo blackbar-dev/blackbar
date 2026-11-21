@@ -24,6 +24,15 @@ export function isUsableMac(value: string): boolean {
 
 export const macDetector: Detector = {
   type: 'MAC',
+  hints: [
+    'MAC',
+    'MAC-Adresse',
+    'MAC address',
+    'Hardware-Adresse',
+    'hardware address',
+    'Gerät',
+    'device',
+  ],
   find(text: string): Match[] {
     const matches: Match[] = [];
     for (const m of text.matchAll(PAIRS)) {
