@@ -54,10 +54,10 @@ export const cardDetector: Detector = {
       for (let i = 0; i < groups.length; ) {
         let last = -1;
         let digits = '';
-        for (const [j, g] of groups.slice(i).entries()) {
-          digits += g.digits;
+        for (let j = i; j < groups.length; j++) {
+          digits += groups[j]?.digits ?? '';
           if (digits.length > 19) break;
-          if (isValidCard(digits)) last = i + j;
+          if (isValidCard(digits)) last = j;
         }
         const first = groups[i];
         const stop = groups[last];

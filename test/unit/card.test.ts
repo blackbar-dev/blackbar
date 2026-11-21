@@ -63,6 +63,12 @@ describe('cardDetector', () => {
   it('finds a grouped card after a short number with the same separator', () => {
     expect(values('ref 12 4111 1111 1111 1111')).toEqual(['4111 1111 1111 1111']);
   });
+  it('scans a long run of single digits in linear time', () => {
+    const text = '1 '.repeat(200_000);
+    const start = Date.now();
+    expect(values(text)).toEqual([]);
+    expect(Date.now() - start).toBeLessThan(2000);
+  });
   it('ignores timestamps and order numbers', () => {
     expect(values('1700000000000 and 1234567890123')).toEqual([]);
   });
