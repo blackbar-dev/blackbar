@@ -1,0 +1,64 @@
+import type { Detector, Match } from '../core/types.js';
+
+// German tax ID (Steuerliche Identifikationsnummer): 11 digits, first digit not 0, written compact
+// or in 2-3-3-3 groups with ONE kind of separator (space or slash; backreference \1 rules out
+// "47 152/039 646"). The lookarounds keep us out of longer digit runs and glued words, including
+// one more digit group with a separator ("030 47 152 039 646"), so phone numbers and longer
+// reference numbers are not cut into a tax ID.
+// TODO(#18): once hint words land, add "Steuer-ID", "IdNr", "Identifikationsnummer", "tax id".
+const CANDIDATE = /(?<!\w|\d[ /])[1-9]\d([ /]?)\d{3}\1\d{3}\1\d{3}(?!\w|[ /]\d)/g;
+
+// Check digit plus the BZSt digit-frequency rule. The check digit alone passes 1 in 10 random
+// numbers, the frequency rule removes most of the rest, but it is still weaker than IBAN mod 97
+// or issuer-plus-Luhn for cards, so a step below CARD.
+const SCORE = 0.85;
+
+/**
+ * Check digit after ISO/IEC 7064, MOD 11,10 (hybrid system), as the BZSt specifies it for the
+ * IdNr (BZSt, "Informationen zur Identifikationsnummer"; ISO/IEC 7064:2003, clause on MOD 11,10):
+ * start with product 10; for each digit, sum = (digit + product) mod 10, a sum of 0 counts as 10,
+ * product = (2 * sum) mod 11. The check digit is 11 - product, where 10 becomes 0.
+ */
+export function taxIdCheckDigit(first10: string): number {
+  let product = 10;
+  for (const ch of first10) {
+    const sum = (Number(ch) + product) % 10 || 10;
+    product = (2 * sum) % 11;
+  }
+  const check = 11 - product;
+  return check === 10 ? 0 : check;
+}
+
+/**
+ * BZSt rule for the first ten digits: exactly one digit appears twice or three times, every other
+ * digit at most once. A digit that appears three times must not stand three in a row.
+ */
+export function hasValidDigitFrequency(first10: string): boolean {
+  const repeated = [...'0123456789'].map((d) => first10.split(d).length - 1).filter((n) => n > 1);
+  return repeated.length === 1 && repeated.every((n) => n <= 3) && !/(\d)\1\1/.test(first10);
+}
+
+/** 11 digits, no leading 0, valid digit frequency, valid ISO 7064 MOD 11,10 check digit. */
+export function isValidTaxId(digits: string): boolean {
+  if (!/^[1-9]\d{10}$/.test(digits)) return false;
+  const first10 = digits.slice(0, 10);
+  return hasValidDigitFrequency(first10) && taxIdCheckDigit(first10) === Number(digits[10]);
+}
+
+export const taxIdDetector: Detector = {
+  type: 'TAX_ID',
+  find(text: string): Match[] {
+    const matches: Match[] = [];
+    for (const m of text.matchAll(CANDIDATE)) {
+      if (!isValidTaxId(m[0].replace(/[ /]/g, ''))) continue;
+      matches.push({
+        type: 'TAX_ID',
+        start: m.index,
+        end: m.index + m[0].length,
+        value: m[0],
+        score: SCORE,
+      });
+    }
+    return matches;
+  },
+};
