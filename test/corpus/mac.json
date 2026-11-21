@@ -76,5 +76,15 @@
     "id": "mac-015",
     "text": "Link-local fe80::1a:2b:3c:4d:5e:6f is up",
     "expected": [{ "type": "IP", "value": "fe80::1a:2b:3c:4d:5e:6f" }]
+  },
+  {
+    "id": "mac-016",
+    "text": "ifconfig shows mac:00:1a:2b:3c:4d:5e on eth0",
+    "expected": [{ "type": "MAC", "value": "00:1a:2b:3c:4d:5e" }]
+  },
+  {
+    "id": "mac-017",
+    "text": "MAC:00:1A:2B:3C:4D:5E",
+    "expected": [{ "type": "MAC", "value": "00:1A:2B:3C:4D:5E" }]
   }
 ]

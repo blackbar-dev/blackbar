@@ -106,5 +106,10 @@
     "id": "url-021",
     "text": "Aww, awww.example.com is just a typo.",
     "expected": []
+  },
+  {
+    "id": "url-022",
+    "text": "Profile at https://example.com./u/anna is public",
+    "expected": [{ "type": "URL", "value": "https://example.com./u/anna" }]
   }
 ]

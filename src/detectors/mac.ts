@@ -2,11 +2,12 @@ import type { Detector, Match } from '../core/types.js';
 
 // Six hex pairs with ONE kind of separator (backreference \1 rules out "00:1a-2b:…").
 // The lookarounds refuse longer runs ("aa:bb:…:ff:00", IPv6) and glued words
-// ("logo-ab-cd-…", "img_de-ad-…"), but allow a trailing sentence period. The tail of a
+// ("logo-ab-cd-…", "img_de-ad-…"), but allow a trailing sentence period and a colon label
+// such as "mac:" or "hwaddr:" (only a standalone hex pair before a colon counts as a longer run). The tail of a
 // compressed IPv6 ("fe80::1a:2b:3c:4d:5e:6f") still matches here; the longer IP match wins
 // the overlap in detect(), and corpus case mac-015 guards that.
 const PAIRS =
-  /(?<!\w|\w[:-])[0-9A-Fa-f]{2}([:-])[0-9A-Fa-f]{2}(?:\1[0-9A-Fa-f]{2}){4}(?!\w|[:-]\w)/g;
+  /(?<!\w|(?<!\w)[0-9A-Fa-f]{2}:|\w-)[0-9A-Fa-f]{2}([:-])[0-9A-Fa-f]{2}(?:\1[0-9A-Fa-f]{2}){4}(?!\w|[:-]\w)/g;
 
 // Dotted three-group form used by network gear ("001a.2b3c.4d5e").
 const DOTTED = /(?<![\w.])[0-9A-Fa-f]{4}(?:\.[0-9A-Fa-f]{4}){2}(?!\w|\.\w)/g;

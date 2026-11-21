@@ -65,7 +65,8 @@ export const urlDetector: Detector = {
     const matches: Match[] = [];
     for (const m of text.matchAll(CANDIDATE)) {
       const value = trimTrailing(m[0]);
-      if (!hasKnownTld(hostOf(value))) continue;
+      // A trailing dot on the host ("example.com.") is valid DNS, so ignore it for the TLD check.
+      if (!hasKnownTld(hostOf(value).replace(/\.$/, ''))) continue;
       matches.push({
         type: 'URL',
         start: m.index,
