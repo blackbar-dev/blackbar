@@ -122,24 +122,28 @@ describe('detect', () => {
     expect(types('abc', { detectors: [legacy], minScore: 0.99 })).toEqual(['IP']);
   });
 
+  it('drops every match when minScore is above 1', () => {
+    expect(detect(TEXT, { minScore: 1.01 })).toEqual([]);
+  });
+
   it('reports every match when minScore is NaN', () => {
     expect(types('abc', { detectors: [fixed('IP', [0, 3, 0.1])], minScore: Number.NaN })).toEqual([
       'IP',
     ]);
   });
 
-  it('lets an IBAN used as local part beat the whole e-mail address', () => {
-    // Deliberate: score comes before length. The domain stays in the text.
-    expect(redact('DE89370400440532013000@example.com').text).toBe('[IBAN_1]@example.com');
+  it('redacts the whole e-mail address when its local part is an IBAN', () => {
+    // Length before score: the shorter IBAN must not split the address and leave the domain.
+    expect(redact('DE89370400440532013000@example.com').text).toBe('[EMAIL_1]');
   });
 
-  it('keeps the higher score when two overlap, even if it is shorter', () => {
+  it('keeps the longer match when two overlap, even if it scores lower', () => {
     const detectors = [fixed('IP', [0, 6, 0.5]), fixed('CARD', [1, 3, 0.9])];
-    expect(types('abcdef', { detectors })).toEqual(['CARD']);
+    expect(types('abcdef', { detectors })).toEqual(['IP']);
   });
 
-  it('keeps the longer match when two overlap with equal score', () => {
-    const detectors = [fixed('IP', [0, 3, 0.8]), fixed('CARD', [1, 6, 0.8])];
+  it('keeps the higher score when two overlap with equal length', () => {
+    const detectors = [fixed('IP', [0, 3, 0.5]), fixed('CARD', [1, 4, 0.9])];
     expect(types('abcdef', { detectors })).toEqual(['CARD']);
   });
 

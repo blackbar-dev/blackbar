@@ -12,7 +12,8 @@ export interface DetectOptions {
 
 /**
  * Runs all detectors and returns non-overlapping matches, sorted by position.
- * When two matches overlap, the higher score wins; then the longer one; then the earlier one.
+ * When two matches overlap, the longer one wins; then the higher score; then the earlier one.
+ * Length comes first so a short match can never split a longer one and leave the rest in the text.
  */
 export function detect(text: string, options: DetectOptions = {}): Match[] {
   const { minScore = 0 } = options;
@@ -26,7 +27,7 @@ export function detect(text: string, options: DetectOptions = {}): Match[] {
     .flatMap((d) => d.find(text))
     .map((m) => (Number.isFinite(m.score) ? m : { ...m, score: 1 }))
     .filter((m) => !(minScore > 0) || m.score >= minScore);
-  all.sort((a, b) => b.score - a.score || b.end - b.start - (a.end - a.start) || a.start - b.start);
+  all.sort((a, b) => b.end - b.start - (a.end - a.start) || b.score - a.score || a.start - b.start);
 
   const kept: Match[] = [];
   for (const m of all) {
