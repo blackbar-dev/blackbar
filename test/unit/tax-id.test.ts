@@ -69,7 +69,7 @@ describe('taxIdDetector', () => {
   });
   it('skips a grouped tax ID shape behind a phone prefix', () => {
     expect(values('+49 30 47 152 039 646')).toEqual([]);
-    expect(values('+49 30 47 152 039 646')).toEqual([]);
+    expect(values('+49\u00A030\u00A047\u00A0152\u00A0039\u00A0646')).toEqual([]);
     expect(values('+49 47 152 039 646')).toEqual([]);
     expect(values('030 47 152 039 646')).toEqual([]);
   });
@@ -90,11 +90,11 @@ describe('taxIdDetector', () => {
     expect(values('2/47152039646/3')).toEqual(['47152039646']);
   });
   it('accepts no-break spaces as group separators', () => {
-    expect(values('29 381 075 632 and 64 028 193 529')).toEqual([
-      '29 381 075 632',
-      '64 028 193 529',
+    expect(values('29\u00A0381\u00A0075\u00A0632 and 64\u202F028\u202F193\u202F529')).toEqual([
+      '29\u00A0381\u00A0075\u00A0632',
+      '64\u202F028\u202F193\u202F529',
     ]);
-    expect(values('29 381 075 632')).toEqual([]);
+    expect(values('29\u00A0381 075\u00A0632')).toEqual([]);
   });
   it('accepts full-width digits and checks them like ASCII digits', () => {
     const fw = (s: string) => s.replace(/\d/g, (d) => String.fromCharCode(0xff10 + Number(d)));

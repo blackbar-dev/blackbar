@@ -139,21 +139,21 @@
   },
   {
     "id": "tax-id-019",
-    "text": "Aus Word kopiert (no-break space): 29 381 075 632.",
+    "text": "Aus Word kopiert (no-break space): 29\u00A0381\u00A0075\u00A0632.",
     "expected": [
       {
         "type": "TAX_ID",
-        "value": "29 381 075 632"
+        "value": "29\u00A0381\u00A0075\u00A0632"
       }
     ]
   },
   {
     "id": "tax-id-020",
-    "text": "Aus PDF kopiert (narrow no-break space): 64 028 193 529",
+    "text": "Aus PDF kopiert (narrow no-break space): 64\u202F028\u202F193\u202F529",
     "expected": [
       {
         "type": "TAX_ID",
-        "value": "64 028 193 529"
+        "value": "64\u202F028\u202F193\u202F529"
       }
     ]
   },
@@ -169,7 +169,7 @@
   },
   {
     "id": "tax-id-022",
-    "text": "Telefon +49 30 47 152 039 646",
+    "text": "Telefon +49\u00A030\u00A047\u00A0152\u00A0039\u00A0646",
     "expected": []
   },
   {
