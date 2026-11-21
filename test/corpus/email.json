@@ -43,5 +43,8 @@
     "id": "email-010",
     "text": "Ticket from noreply@mail.example.com (auto)",
     "expected": [{ "type": "EMAIL", "value": "noreply@mail.example.com" }]
-  }
+  },
+  { "id": "email-011", "text": "Retina asset: logo@2x.png", "expected": [] },
+  { "id": "email-012", "text": "Scan saved as scan@300dpi.jpg", "expected": [] },
+  { "id": "email-013", "text": "Siehe Anhang report@2026.xlsx und notes@v2.docx", "expected": [] }
 ]
