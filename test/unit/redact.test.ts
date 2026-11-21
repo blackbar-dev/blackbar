@@ -1,9 +1,12 @@
 import { describe, expect, it } from 'vitest';
+import { cardDetector } from '../../src/detectors/index.js';
 import {
   type DetectOptions,
   type Detector,
   detect,
   type EntityType,
+  emailDetector,
+  ibanDetector,
   redact,
   restore,
 } from '../../src/index.js';
@@ -173,5 +176,82 @@ describe('detect', () => {
   it('keeps the earlier match when score and length are equal', () => {
     const detectors = [fixed('CARD', [1, 4, 0.8]), fixed('IP', [0, 3, 0.8])];
     expect(types('abcdef', { detectors })).toEqual(['IP']);
+  });
+
+  describe('partly overlapping matches', () => {
+    // Stands in for the URL detector from #23: stops at the first space, like a URL does.
+    const urlish: Detector = {
+      type: 'IP',
+      find: (text) =>
+        [...text.matchAll(/https:\/\/\S+/g)].map((m) => ({
+          type: 'IP' as const,
+          start: m.index,
+          end: m.index + m[0].length,
+          value: m[0],
+          score: 0.5,
+        })),
+    };
+    const roundTrip = (text: string, detectors: Detector[]) => {
+      const result = redact(text, { detectors });
+      expect(restore(result.text, result.mapping)).toBe(text);
+      return result;
+    };
+
+    it('grows a long match that ends inside a spaced IBAN', () => {
+      const text = 'Pay to https://example.com/pay?iban=DE89 3704 0044 0532 0130 00 now';
+      const result = roundTrip(text, [urlish, ibanDetector]);
+      expect(result.text).toBe('Pay to [IP_1] now');
+      expect(result.mapping['[IP_1]']).toBe(
+        'https://example.com/pay?iban=DE89 3704 0044 0532 0130 00',
+      );
+    });
+
+    it('grows a long match that ends inside a spaced card number', () => {
+      const text = 'See https://example.com/pay?card=4111 1111 1111 1111 now';
+      expect(roundTrip(text, [urlish, cardDetector]).text).toBe('See [IP_1] now');
+    });
+
+    it('covers an e-mail address that starts inside a spaced IBAN', () => {
+      const text = 'Refund to GB82 WEST 1234 5698 7654 32@example.org by Friday.';
+      const result = roundTrip(text, [emailDetector, ibanDetector]);
+      expect(result.text).toBe('Refund to [IBAN_1] by Friday.');
+      expect(result.mapping['[IBAN_1]']).toBe('GB82 WEST 1234 5698 7654 32@example.org');
+    });
+
+    it('merges a chain of three into one span with the winner type and score', () => {
+      const detectors = [
+        fixed('IP', [0, 4, 0.5], [11, 15, 0.95]),
+        fixed('CARD', [3, 7, 0.9]),
+        fixed('EMAIL', [6, 10, 0.5]),
+      ];
+      // The unrelated IP at 11..15 ranks first and must survive the merge untouched.
+      expect(detect('abcdefghijklmnop', { detectors })).toEqual([
+        { type: 'CARD', start: 0, end: 10, value: 'abcdefghij', score: 0.9 },
+        { type: 'IP', start: 11, end: 15, value: 'lmno', score: 0.95 },
+      ]);
+    });
+
+    it('merges two kept matches when a lower-ranked one bridges them', () => {
+      const detectors = [
+        fixed('IP', [0, 4, 0.9]),
+        fixed('CARD', [3, 7, 0.5]),
+        fixed('EMAIL', [6, 10, 0.8]),
+      ];
+      expect(detect('abcdefghijk', { detectors })).toEqual([
+        { type: 'IP', start: 0, end: 10, value: 'abcdefghij', score: 0.9 },
+      ]);
+    });
+
+    it('still drops a match that lies fully inside another one', () => {
+      const detectors = [fixed('IP', [0, 6, 0.5]), fixed('CARD', [1, 3, 0.9])];
+      expect(detect('abcdefg', { detectors })).toEqual([
+        { type: 'IP', start: 0, end: 6, value: 'abcdef', score: 0.5 },
+      ]);
+    });
+
+    it('leaves matches that only touch apart', () => {
+      const detectors = [fixed('IP', [0, 3, 0.5]), fixed('CARD', [3, 6, 0.9])];
+      expect(types('abcdef', { detectors })).toEqual(['IP', 'CARD']);
+    });
   });
 });
