@@ -14,5 +14,7 @@ export interface Match {
 /** A detector finds one kind of personal data. One file per detector in src/detectors/. */
 export interface Detector {
   type: EntityType;
+  /** Words that make a nearby match more likely real ("IBAN", "Kontonummer"). See `detect`. */
+  hints?: readonly string[];
   find(text: string): Match[];
 }

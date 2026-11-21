@@ -1,4 +1,5 @@
 import { defaultDetectors } from '../detectors/index.js';
+import { applyHints, compileHints, type HintWindow } from './hints.js';
 import type { Detector, EntityType, Match } from './types.js';
 
 export interface DetectOptions {
@@ -8,6 +9,31 @@ export interface DetectOptions {
   detectors?: Detector[];
   /** Drop matches scoring below this. Default 0: every match is reported. */
   minScore?: number;
+  /**
+   * Extra hint words per type, on top of each detector's own. A hint near a match raises its
+   * score by `HINT_STEP` (once, capped at 1). Case, umlaut spelling (ü/ue, ß/ss) and
+   * spaces vs. hyphens do not matter; hints match whole words only.
+   */
+  hints?: Partial<Record<EntityType, readonly string[]>>;
+  /** Where to look for hints. Default: 32 characters before the match, none after. */
+  hintWindow?: HintWindow;
+}
+
+// Detectors are long-lived, so their own hints are compiled once.
+const builtInHints = new WeakMap<Detector, RegExp | undefined>();
+
+function hintsFor(d: Detector, extra: readonly string[] | undefined): RegExp | undefined {
+  if (extra?.length) return compileHints([...(d.hints ?? []), ...extra]);
+  if (!builtInHints.has(d)) builtInHints.set(d, compileHints(d.hints ?? []));
+  return builtInHints.get(d);
+}
+
+function findScored(d: Detector, text: string, options: DetectOptions): Match[] {
+  const re = hintsFor(d, options.hints?.[d.type]);
+  return d
+    .find(text)
+    .map((m) => (Number.isFinite(m.score) ? m : { ...m, score: 1 }))
+    .map((m) => (re ? applyHints(text, m, re, options.hintWindow) : m));
 }
 
 /**
@@ -27,8 +53,7 @@ export function detect(text: string, options: DetectOptions = {}): Match[] {
   // dropping it silently would leave the data in the text. Only filter when asked to, so
   // a NaN minScore cannot drop everything either.
   const all = detectors
-    .flatMap((d) => d.find(text))
-    .map((m) => (Number.isFinite(m.score) ? m : { ...m, score: 1 }))
+    .flatMap((d) => findScored(d, text, options))
     .filter((m) => !(minScore > 0) || m.score >= minScore);
   all.sort((a, b) => b.end - b.start - (a.end - a.start) || b.score - a.score || a.start - b.start);
 

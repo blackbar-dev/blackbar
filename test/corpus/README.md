@@ -13,4 +13,8 @@ Each file is a JSON array of cases:
 `expected: []` is a negative case: nothing should be found. Negative cases matter as much
 as positive ones, because they catch false alarms.
 
+A case may carry `options` for `detect` (see `hints.json`, where the hint decides whether a
+match passes `minScore`). The unit tests honour them; `npm run bench` uses the defaults, so the
+expected findings must hold both ways.
+
 `npm run bench` measures recall and precision over all files here.

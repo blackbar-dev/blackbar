@@ -58,6 +58,7 @@ function hasFileExtension(value: string): boolean {
 
 export const emailDetector: Detector = {
   type: 'EMAIL',
+  hints: ['E-Mail', 'Mail', 'E-Mail-Adresse', 'Mailadresse', 'email address', 'Kontakt', 'contact'],
   find(text: string): Match[] {
     const matches: Match[] = [];
     for (const m of text.matchAll(EMAIL)) {

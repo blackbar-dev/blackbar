@@ -40,6 +40,7 @@ export function isValidIban(raw: string): boolean {
 
 export const ibanDetector: Detector = {
   type: 'IBAN',
+  hints: ['IBAN', 'Konto', 'Kontonummer', 'Bankverbindung', 'bank account', 'account number'],
   find(text: string): Match[] {
     const matches: Match[] = [];
     for (const m of text.matchAll(IBAN)) {

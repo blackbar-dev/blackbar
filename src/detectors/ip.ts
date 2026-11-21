@@ -53,6 +53,7 @@ function findIpv6(text: string): Match[] {
 
 export const ipDetector: Detector = {
   type: 'IP',
+  hints: ['IP', 'IP-Adresse', 'IP address', 'IPv4', 'IPv6', 'Server', 'Host'],
   find(text: string): Match[] {
     const matches = findIpv6(text);
     for (const m of text.matchAll(IPV4)) {

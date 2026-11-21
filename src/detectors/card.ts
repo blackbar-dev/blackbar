@@ -44,6 +44,16 @@ export function isValidCard(digits: string): boolean {
 
 export const cardDetector: Detector = {
   type: 'CARD',
+  hints: [
+    'Karte',
+    'Kreditkarte',
+    'Kartennummer',
+    'card',
+    'credit card',
+    'card number',
+    'Visa',
+    'Mastercard',
+  ],
   find(text: string): Match[] {
     const matches: Match[] = [];
     for (const m of text.matchAll(CANDIDATE)) {

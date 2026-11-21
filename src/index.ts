@@ -1,4 +1,5 @@
 export { type DetectOptions, detect } from './core/detect.js';
+export { HINT_STEP, type HintWindow } from './core/hints.js';
 export {
   type RedactedEntity,
   type RedactOptions,
