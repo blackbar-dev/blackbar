@@ -7,6 +7,10 @@ const IPV4 = /(?<![\w.])\d{1,3}(?:\.\d{1,3}){3}(?!\w|\.\d)/g;
 // Anything made of hex digits, colons and dots; validated structurally afterwards.
 const IPV6_CANDIDATE = /(?<![\w:.])[0-9A-Fa-f:.]*:[0-9A-Fa-f:.]*/g;
 
+// Structure check only (octet ranges, group counts), no checksum. Dotted version numbers and
+// section numbers like "1.2.3.4" pass it, so the lowest built-in score.
+const SCORE = 0.7;
+
 /** Four octets 0-255 without leading zeros ("010" is ambiguous: octal in some parsers). */
 export function isValidIpv4(s: string): boolean {
   const octets = s.split('.');
@@ -42,7 +46,7 @@ function findIpv6(text: string): Match[] {
     if (!value || !isValidIpv6(value)) continue;
     const next = text[m.index + value.length];
     if (next !== undefined && /\w/.test(next)) continue;
-    matches.push({ type: 'IP', start: m.index, end: m.index + value.length, value });
+    matches.push({ type: 'IP', start: m.index, end: m.index + value.length, value, score: SCORE });
   }
   return matches;
 }
@@ -57,7 +61,7 @@ export const ipDetector: Detector = {
       const end = start + m[0].length;
       // Skip IPv4 tails already covered by an IPv6 match.
       if (matches.some((v) => start < v.end && end > v.start)) continue;
-      matches.push({ type: 'IP', start, end, value: m[0] });
+      matches.push({ type: 'IP', start, end, value: m[0], score: SCORE });
     }
     return matches.sort((a, b) => a.start - b.start);
   },

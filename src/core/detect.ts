@@ -6,18 +6,21 @@ export interface DetectOptions {
   types?: EntityType[];
   /** Replace the built-in detectors entirely. */
   detectors?: Detector[];
+  /** Drop matches scoring below this. Default 0: every match is reported. */
+  minScore?: number;
 }
 
 /**
  * Runs all detectors and returns non-overlapping matches, sorted by position.
- * When two matches overlap, the longer one wins; on a tie, the earlier one.
+ * When two matches overlap, the higher score wins; then the longer one; then the earlier one.
  */
 export function detect(text: string, options: DetectOptions = {}): Match[] {
+  const { minScore = 0 } = options;
   const detectors = (options.detectors ?? defaultDetectors).filter(
     (d) => !options.types || options.types.includes(d.type),
   );
-  const all = detectors.flatMap((d) => d.find(text));
-  all.sort((a, b) => b.end - b.start - (a.end - a.start) || a.start - b.start);
+  const all = detectors.flatMap((d) => d.find(text)).filter((m) => m.score >= minScore);
+  all.sort((a, b) => b.score - a.score || b.end - b.start - (a.end - a.start) || a.start - b.start);
 
   const kept: Match[] = [];
   for (const m of all) {
