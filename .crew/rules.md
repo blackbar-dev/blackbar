@@ -17,3 +17,15 @@
 - If `CREW_ENABLED` is not `true`, do nothing.
 
 Personas live in `.crew/personas/`. The runner for dev agents is `.crew/runner/dev.mjs`.
+
+## Clean-room rule for other PII tools
+
+Blackbar takes ideas from the wider field, never code. This keeps our work our own.
+
+- Do not open the source code, pattern files, hint-word lists or test data of other PII tools
+  (for example Presidio). Work from the issue text and from official specifications.
+- Derive formats and check digits from the issuing authority or the standard (ISO, BIP, BZSt,
+  DRV, GKV …) and name that source in a code comment.
+- Use our own names and structure: short type names (`EMAIL`, `TAX_ID`), the country as its own
+  field instead of a prefix, functions over class hierarchies.
+- Write corpus and test values yourself. Never copy examples from another project.
