@@ -110,6 +110,29 @@ describe('detect', () => {
     expect(types('abc', { detectors: [fixed('IP', [0, 3, 0])] })).toEqual(['IP']);
   });
 
+  it('treats a match without score as certain instead of dropping it', () => {
+    // Detector written before scores existed, or in plain JavaScript.
+    const legacy = {
+      type: 'IP',
+      find: (text: string) => [{ type: 'IP', start: 0, end: 3, value: text.slice(0, 3) }],
+    } as unknown as Detector;
+    expect(detect('abc', { detectors: [legacy] })).toEqual([
+      { type: 'IP', start: 0, end: 3, value: 'abc', score: 1 },
+    ]);
+    expect(types('abc', { detectors: [legacy], minScore: 0.99 })).toEqual(['IP']);
+  });
+
+  it('reports every match when minScore is NaN', () => {
+    expect(types('abc', { detectors: [fixed('IP', [0, 3, 0.1])], minScore: Number.NaN })).toEqual([
+      'IP',
+    ]);
+  });
+
+  it('lets an IBAN used as local part beat the whole e-mail address', () => {
+    // Deliberate: score comes before length. The domain stays in the text.
+    expect(redact('DE89370400440532013000@example.com').text).toBe('[IBAN_1]@example.com');
+  });
+
   it('keeps the higher score when two overlap, even if it is shorter', () => {
     const detectors = [fixed('IP', [0, 6, 0.5]), fixed('CARD', [1, 3, 0.9])];
     expect(types('abcdef', { detectors })).toEqual(['CARD']);

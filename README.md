@@ -41,7 +41,8 @@ npx blackbar restore --map mapping.json < answer.txt
 Every match carries a `score` from 0 to 1. Checksum-validated formats score high (IBAN 0.95,
 card 0.9), pattern-only formats lower (e-mail 0.8, IP 0.7). Pass `minScore` to `detect` or
 `redact` to be stricter; by default every match is reported. When matches overlap, the higher
-score wins, then the longer span, then the earlier one.
+score wins, then the longer span, then the earlier one. A custom detector that leaves out
+`score` gets 1, so its matches are never dropped silently.
 
 Every change is measured against a synthetic corpus (`test/corpus/`). CI blocks any change
 that lowers recall or precision. Current numbers are in each CI run's summary.

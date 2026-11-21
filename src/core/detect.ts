@@ -19,7 +19,13 @@ export function detect(text: string, options: DetectOptions = {}): Match[] {
   const detectors = (options.detectors ?? defaultDetectors).filter(
     (d) => !options.types || options.types.includes(d.type),
   );
-  const all = detectors.flatMap((d) => d.find(text)).filter((m) => m.score >= minScore);
+  // A match without a numeric score (detector from before scores, plain JS) counts as certain:
+  // dropping it silently would leave the data in the text. Only filter when asked to, so
+  // a NaN minScore cannot drop everything either.
+  const all = detectors
+    .flatMap((d) => d.find(text))
+    .map((m) => (Number.isFinite(m.score) ? m : { ...m, score: 1 }))
+    .filter((m) => !(minScore > 0) || m.score >= minScore);
   all.sort((a, b) => b.score - a.score || b.end - b.start - (a.end - a.start) || a.start - b.start);
 
   const kept: Match[] = [];
