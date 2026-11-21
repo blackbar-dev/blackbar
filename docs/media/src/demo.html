@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Blackbar demo</title>
+<style>
+  :root{
+    --bg:#0d1117; --line:#30363d; --fg:#e6edf3; --muted:#8b949e;
+    --paper:#f7f5ef; --ink:#1f2328; --ink2:#6e7781;
+    --email:#2f81f7; --iban:#c98a00; --ok:#1a7f37; --okl:#3fb950;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{width:1200px;height:600px;overflow:hidden;background:var(--bg)}
+  body{font-family:Inter,system-ui,sans-serif;color:var(--fg);position:relative}
+  .mono{font-family:'DejaVu Sans Mono',monospace}
+  #stage{position:absolute;inset:0}
+  #caption{position:absolute;left:48px;top:30px;height:40px;display:flex;align-items:center;gap:14px;font-size:26px;font-weight:600;letter-spacing:-.2px}
+  #capnum{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:9px;background:var(--fg);color:var(--bg);font-size:19px;font-weight:700}
+  .card{position:absolute;left:48px;width:700px;background:var(--paper);color:var(--ink);border-radius:14px;padding:22px 28px;box-shadow:0 10px 30px rgba(0,0,0,.35)}
+  .card .hd{font-size:14px;color:var(--ink2);margin-bottom:12px;display:flex;justify-content:space-between}
+  .card .bd{font-size:22px;line-height:38px}
+  #out{top:96px;height:186px;overflow:hidden}
+  #rep{top:372px;height:150px}
+  .ent{display:inline-block;position:relative;vertical-align:bottom;height:34px;line-height:34px;white-space:nowrap;overflow:visible}
+  .ent .val,.ent .tok{position:absolute;left:0;top:0;white-space:nowrap}
+  .ent .glow{position:absolute;left:-4px;right:-4px;top:2px;bottom:2px;border-radius:6px}
+  .ent .bar{position:absolute;left:-3px;top:4px;height:28px;background:linear-gradient(180deg,#2a2a2a,#000 55%);border-radius:3px}
+  .ent .tok{top:3px;height:28px;line-height:28px;padding:0 9px;border-radius:7px;font-size:18px;font-weight:700;color:#fff;transform-origin:center}
+  .scan{position:absolute;top:0;bottom:0;width:120px;background:linear-gradient(90deg,transparent,rgba(47,129,247,.18),transparent);pointer-events:none}
+  #llm{position:absolute;left:330px;top:302px;width:88px;height:48px;border:1.5px solid var(--line);border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px;color:var(--fg);background:#161b22}
+  #dot{position:absolute;width:12px;height:12px;border-radius:50%;background:var(--fg);left:368px}
+  #vault{position:absolute;left:784px;top:96px;width:368px;height:426px;background:#010409;border:1.5px solid var(--line);border-radius:14px;padding:22px}
+  #vault .t{display:flex;align-items:center;gap:12px;font-size:19px;font-weight:600}
+  #vault .s{font-size:14px;color:var(--muted);margin:6px 0 22px 40px}
+  .row{border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-bottom:12px;background:#0d1117}
+  .row .k{font-size:16px;font-weight:700}
+  .row .v{font-size:14px;color:var(--muted);margin-top:6px}
+  #check{position:absolute;left:684px;top:458px;width:48px;height:48px;border-radius:50%;background:var(--ok);display:flex;align-items:center;justify-content:center}
+  #end{position:absolute;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px}
+  .word{font-size:84px;font-weight:800;letter-spacing:-2px;display:flex;align-items:center}
+  .word .b{background:var(--fg);color:var(--bg);padding:0 14px;margin-left:4px;border-radius:6px;line-height:96px}
+  .tag{font-size:24px;color:var(--fg);opacity:.9}
+  .sub{font-size:17px;color:var(--muted)}
+  #measure{position:absolute;left:-9999px;top:0;visibility:hidden}
+</style></head>
+<body>
+<div id="stage">
+  <div id="caption"><span id="capnum">1</span><span id="captext"></span></div>
+
+  <div class="card" id="out">
+    <div class="hd"><span>support-ticket.txt</span><span>ticket #4711</span></div>
+    <div class="bd">Hi, Dieter from Synapsio finance. Please refund order #4711 to <span class="ent" data-type="IBAN" data-val="DE89 3704 0044 0532 0130 00" data-tok="[IBAN_1]" data-where="out"></span> and send the receipt to <span class="ent" data-type="EMAIL" data-val="dieter.krause@example.com" data-tok="[EMAIL_1]" data-where="out"></span>. Thanks!</div>
+    <div class="scan" id="scan"></div>
+  </div>
+
+  <div id="llm">LLM</div>
+  <div id="dot"></div>
+
+  <div class="card" id="rep">
+    <div class="hd"><span>reply from the LLM</span><span id="rephd">restored with mapping.json</span></div>
+    <div class="bd">Done. Refund to <span class="ent" data-type="IBAN" data-val="DE89 3704 0044 0532 0130 00" data-tok="[IBAN_1]" data-where="rep"></span> is on its way, receipt sent to <span class="ent" data-type="EMAIL" data-val="dieter.krause@example.com" data-tok="[EMAIL_1]" data-where="rep"></span>.</div>
+  </div>
+  <div id="check"><svg width="26" height="26" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12.5l5 5L20 6.5" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+
+  <div id="vault">
+    <div class="t">
+      <svg width="28" height="30" viewBox="0 0 28 30" aria-hidden="true"><g id="shackle"><path d="M7 14V9a7 7 0 0 1 14 0v5" fill="none" stroke="#e6edf3" stroke-width="3"/></g><rect x="3" y="13" width="22" height="16" rx="4" fill="#e6edf3"/><circle cx="14" cy="21" r="2.4" fill="#010409"/></svg>
+      <span class="mono">mapping.json</span>
+    </div>
+    <div class="s">stays on your machine</div>
+    <div class="row" id="row-IBAN"><div class="k mono" style="color:#e3b341">[IBAN_1]</div><div class="v mono">DE89 3704 0044 0532 0130 00</div></div>
+    <div class="row" id="row-EMAIL"><div class="k mono" style="color:#58a6ff">[EMAIL_1]</div><div class="v mono">dieter.krause@example.com</div></div>
+  </div>
+
+  <div id="end">
+    <div class="word">Black<span class="b">bar</span></div>
+    <div class="tag">Find personal data. Black it out. Put it back.</div>
+    <div class="sub">Zero dependencies · Apache 2.0</div>
+  </div>
+</div>
+<div id="measure" class="card"><div class="bd"><span id="mv"></span><span id="mt" class="mono" style="font-size:18px;font-weight:700;padding:0 9px"></span></div></div>
+
+<script>
+const COL={EMAIL:'#2f81f7',IBAN:'#c98a00'};
+const cl=(x,a=0,b=1)=>Math.min(b,Math.max(a,x));
+const ease=x=>x<.5?4*x*x*x:1-(-2*x+2) ** 3/2;
+const S=(t,a,b)=>ease(cl((t-a)/(b-a)));
+const lerp=(a,b,k)=>a+(b-a)*k;
+
+const ents=[...document.querySelectorAll('.ent')].map((el,_i)=>{
+  document.getElementById('mv').textContent=el.dataset.val;
+  document.getElementById('mt').textContent=el.dataset.tok;
+  const wv=document.getElementById('mv').getBoundingClientRect().width;
+  const wt=document.getElementById('mt').getBoundingClientRect().width;
+  el.innerHTML=`<span class="glow"></span><span class="val"></span><span class="bar"></span><span class="tok mono"></span>`;
+  const q=s=>el.querySelector(s);
+  q('.val').textContent=el.dataset.val; q('.tok').textContent=el.dataset.tok;
+  q('.tok').style.background=COL[el.dataset.type];
+  q('.glow').style.background=COL[el.dataset.type];
+  return {el,wv,wt,type:el.dataset.type,where:el.dataset.where,d:el.dataset.type==='IBAN'?0:0.35,
+          glow:q('.glow'),val:q('.val'),bar:q('.bar'),tok:q('.tok')};
+});
+const $=id=>document.getElementById(id);
+
+const CAPS=[[0,1,'A support ticket with personal data'],[2.0,1,'Blackbar finds the personal data'],[4.0,2,'…and swaps it for placeholders'],
+            [7.6,3,'Your LLM only ever sees placeholders'],[10.6,4,'restore() puts the real data back']];
+
+window.render=(t)=> {
+  // caption
+  let cap=CAPS[0]; for(const c of CAPS) if(t>=c[0]) cap=c;
+  const capIn=S(t,cap[0],cap[0]+.35);
+  $('caption').style.opacity=capIn*(1-S(t,12.8,13.1));
+  $('caption').style.transform=`translateY(${(1-capIn)*8}px)`;
+  $('capnum').style.display=cap[0]===0?'none':'inline-flex';
+  $('capnum').textContent=cap[1]; $('captext').textContent=cap[2];
+
+  // outgoing card
+  const outIn=S(t,0.1,0.8);
+  $('out').style.opacity=outIn; $('out').style.transform=`translateY(${(1-outIn)*14}px)`;
+  $('scan').style.left=`${lerp(-140,720,cl((t-2.0)/1.3))}px`;
+  $('scan').style.opacity=(t>2&&t<3.3)?1:0;
+
+  for(const e of ents){
+    const d=e.d;
+    if(e.where==='out'){
+      const hl=S(t,2.4+d,2.8+d)*(1-S(t,4.6+d,4.9+d));
+      const bar=S(t,4.0+d,4.6+d);
+      const f1=S(t,5.6+d,5.9+d), f2=S(t,5.9+d,6.2+d);
+      const w=lerp(e.wv,e.wt,S(t,5.6+d,6.2+d));
+      e.el.style.width=`${w}px`;
+      e.glow.style.opacity=hl*.28;
+      e.val.style.opacity=f1>0?0:1;
+      e.val.style.color=hl>0.05?COL[e.type]:'';
+      
+      e.bar.style.width=`${(e.wv+6)*bar}px`;
+      e.bar.style.transform=`scaleY(${1-f1})`; e.bar.style.width=f1>0?`${w+6}px`:e.bar.style.width;
+      e.tok.style.transform=`scaleY(${f2})`; e.tok.style.opacity=f2>0?1:0;
+    } else {
+      const r1=S(t,11.0+d,11.3+d), r2=S(t,11.3+d,11.6+d);
+      const w=lerp(e.wt,e.wv,S(t,11.0+d,11.6+d));
+      e.el.style.width=`${w}px`;
+      e.glow.style.background='#1a7f37';
+      e.glow.style.opacity=r2*.18*(1-S(t,12.4,12.9));
+      e.bar.style.width='0px';
+      e.tok.style.transform=`scaleY(${1-r1})`; e.tok.style.opacity=r1<1?1:0;
+      e.val.style.opacity=r2; e.val.style.color=r2>0?'#1a7f37':''; 
+    }
+  }
+
+  // mapping rows + lock
+  for(const [type,d] of [['IBAN',0],['EMAIL',.35]]){
+    const r=$(`row-${type}`), a=S(t,5.9+d,6.4+d);
+    r.style.opacity=a; r.style.transform=`translateX(${(1-a)*20}px)`;
+    const g=S(t,11.0+d,11.3+d)*(1-S(t,12.2,12.7));
+    r.style.borderColor=g>0?`rgba(63,185,80,${.3+.7*g})`:'';
+    r.style.boxShadow=g>0?`0 0 ${18*g}px rgba(63,185,80,${.35*g})`:'none';
+  }
+  const vin=S(t,0.3,1.0);
+  $('vault').style.opacity=vin;
+  $('shackle').setAttribute('transform',`translate(0 ${-5*(1-S(t,6.7,7.0))})`);
+
+  // travel to LLM and back
+  const go=S(t,7.9,8.5);
+  $('dot').style.top=`${lerp(284,310,go)}px`;
+  $('dot').style.opacity=(t>7.9&&t<8.55)?1:0;
+  const pulse=t>8.5&&t<9.2?.5+.5*Math.sin((t-8.5)*18):0;
+  $('llm').style.borderColor=pulse?`rgba(230,237,243,${.4+.6*pulse})`:'';
+  $('llm').style.opacity=S(t,7.6,8.0);
+  const ri=S(t,9.1,9.7);
+  $('rep').style.opacity=ri; $('rep').style.transform=`translateY(${(1-ri)*14}px)`;
+  $('rephd').style.opacity=S(t,11.6,12.0);
+  const ck=S(t,11.9,12.25);
+  $('check').style.opacity=ck; $('check').style.transform=`scale(${.6+.4*ck})`;
+
+  // end card
+  $('end').style.opacity=S(t,12.9,13.3)*(1-S(t,15.5,15.9));
+};
+window.DURATION=16;
+render(parseFloat(new URLSearchParams(location.search).get('t')||'6.5'));
+</script>
+</body></html>
