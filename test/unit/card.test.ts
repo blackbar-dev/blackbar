@@ -49,6 +49,20 @@ describe('cardDetector', () => {
     expect(values('04111111111111111')).toEqual([]);
     expect(values('41111111111111111')).toEqual([]);
   });
+  it('finds two cards separated by a space', () => {
+    expect(values('4111111111111111 5105105105105100')).toEqual([
+      '4111111111111111',
+      '5105105105105100',
+    ]);
+  });
+  it('finds a card after a short number', () => {
+    expect(cardDetector.find('Order 12 4111111111111111')).toEqual([
+      { type: 'CARD', start: 9, end: 25, value: '4111111111111111' },
+    ]);
+  });
+  it('finds a grouped card after a short number with the same separator', () => {
+    expect(values('ref 12 4111 1111 1111 1111')).toEqual(['4111 1111 1111 1111']);
+  });
   it('ignores timestamps and order numbers', () => {
     expect(values('1700000000000 and 1234567890123')).toEqual([]);
   });

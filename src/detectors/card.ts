@@ -44,8 +44,34 @@ export const cardDetector: Detector = {
   find(text: string): Match[] {
     const matches: Match[] = [];
     for (const m of text.matchAll(CANDIDATE)) {
-      if (isValidCard(m[0].replace(/[ -]/g, ''))) {
-        matches.push({ type: 'CARD', start: m.index, end: m.index + m[0].length, value: m[0] });
+      // A candidate may glue a card to its neighbours ("12 4111111111111111"). Split it into
+      // digit groups and take the longest valid run of groups at each position.
+      const groups = [...m[0].matchAll(/\d+/g)].map((g) => ({
+        digits: g[0],
+        start: m.index + g.index,
+        end: m.index + g.index + g[0].length,
+      }));
+      for (let i = 0; i < groups.length; ) {
+        let last = -1;
+        let digits = '';
+        for (const [j, g] of groups.slice(i).entries()) {
+          digits += g.digits;
+          if (digits.length > 19) break;
+          if (isValidCard(digits)) last = i + j;
+        }
+        const first = groups[i];
+        const stop = groups[last];
+        if (!first || !stop) {
+          i++;
+          continue;
+        }
+        matches.push({
+          type: 'CARD',
+          start: first.start,
+          end: stop.end,
+          value: text.slice(first.start, stop.end),
+        });
+        i = last + 1;
       }
     }
     return matches;
