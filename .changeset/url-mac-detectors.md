@@ -2,4 +2,4 @@
 'blackbar': minor
 ---
 
-New URL detector (`http`, `https`, `ftp` or `www.`, checked against a built-in TLD list, trailing sentence punctuation stays outside) and MAC detector (colon, dash and dotted forms; all-zero and broadcast addresses are ignored). New tokens `[URL_n]` and `[MAC_n]`.
+New URL detector (`http`, `https`, `ftp` or `www.`, checked against a built-in TLD list, trailing sentence punctuation stays outside) and MAC detector (colon, dash and dotted forms; all-zero and broadcast addresses are ignored). New tokens `[URL_n]` and `[MAC_n]`. URL matches score 0.8 (pattern plus TLD check), MAC matches 0.7 (structure only).

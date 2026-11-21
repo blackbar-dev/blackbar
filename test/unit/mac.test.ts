@@ -19,8 +19,12 @@ describe('isUsableMac', () => {
 describe('macDetector', () => {
   it('reports positions', () => {
     expect(macDetector.find('mac 00:1a:2b:3c:4d:5e.')).toEqual([
-      { type: 'MAC', start: 4, end: 21, value: '00:1a:2b:3c:4d:5e' },
+      { type: 'MAC', start: 4, end: 21, value: '00:1a:2b:3c:4d:5e', score: 0.7 },
     ]);
+  });
+  it('gives colon, dash and dotted forms the same structure-only score', () => {
+    const matches = macDetector.find('00:1a:2b:3c:4d:5e 00-1a-2b-3c-4d-5e 001a.2b3c.4d5e');
+    expect(matches.map((m) => m.score)).toEqual([0.7, 0.7, 0.7]);
   });
   it('finds colon, dash and dotted forms', () => {
     expect(values('00:1A:2B:3C:4D:5E 00-1a-2b-3c-4d-5e 001a.2b3c.4d5e')).toEqual([

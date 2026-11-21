@@ -71,5 +71,10 @@
     "id": "mac-014",
     "text": "Route via aa:bb:cc:dd:ee:ff:11:22 today",
     "expected": [{ "type": "IP", "value": "aa:bb:cc:dd:ee:ff:11:22" }]
+  },
+  {
+    "id": "mac-015",
+    "text": "Link-local fe80::1a:2b:3c:4d:5e:6f is up",
+    "expected": [{ "type": "IP", "value": "fe80::1a:2b:3c:4d:5e:6f" }]
   }
 ]

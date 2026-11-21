@@ -22,8 +22,12 @@ describe('hasKnownTld', () => {
 describe('urlDetector', () => {
   it('reports positions', () => {
     expect(urlDetector.find('at https://example.com/x.')).toEqual([
-      { type: 'URL', start: 3, end: 24, value: 'https://example.com/x' },
+      { type: 'URL', start: 3, end: 24, value: 'https://example.com/x', score: 0.8 },
     ]);
+  });
+  it('gives every form the same pattern-plus-TLD score', () => {
+    const scores = urlDetector.find('https://example.com ftp://example.net www.example.de');
+    expect(scores.map((m) => m.score)).toEqual([0.8, 0.8, 0.8]);
   });
   it('accepts http, https, ftp and www.', () => {
     expect(
@@ -48,7 +52,13 @@ describe('urlDetector', () => {
   });
   it('wins over an e-mail address inside it', () => {
     expect(detect('go https://example.com/?to=anna@example.com now')).toEqual([
-      { type: 'URL', start: 3, end: 43, value: 'https://example.com/?to=anna@example.com' },
+      {
+        type: 'URL',
+        start: 3,
+        end: 43,
+        value: 'https://example.com/?to=anna@example.com',
+        score: 0.8,
+      },
     ]);
   });
 });

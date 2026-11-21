@@ -8,6 +8,10 @@ const SCHEME = /^(?:https?|ftp):\/\//i;
 const LABEL = '[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?';
 const HOST = new RegExp(String.raw`^(?:${LABEL}\.)+([a-z]{2,63})$`, 'i');
 
+// Pattern plus TLD check, no checksum. The scheme or "www." is as strong a signal as the "@" in
+// an e-mail address, so the same score as EMAIL.
+const SCORE = 0.8;
+
 // A short list of TLDs we wrote ourselves. Without it "www.backup.tar.gz" would be a link.
 // Common generic TLDs plus the larger country codes; extend when the corpus asks for it.
 // biome-ignore format: compact list is easier to scan
@@ -54,7 +58,13 @@ export const urlDetector: Detector = {
     for (const m of text.matchAll(CANDIDATE)) {
       const value = trimTrailing(m[0]);
       if (!hasKnownTld(hostOf(value))) continue;
-      matches.push({ type: 'URL', start: m.index, end: m.index + value.length, value });
+      matches.push({
+        type: 'URL',
+        start: m.index,
+        end: m.index + value.length,
+        value,
+        score: SCORE,
+      });
     }
     return matches;
   },

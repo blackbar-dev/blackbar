@@ -103,6 +103,22 @@ describe('detect', () => {
     expect(email).toBeGreaterThan(ip);
   });
 
+  it('ranks URL (pattern plus TLD) above MAC (structure only)', () => {
+    const score = (text: string) => detect(text)[0]?.score ?? 0;
+    const url = score('https://example.com/a');
+    const mac = score('00:1a:2b:3c:4d:5e');
+    expect(url).toBe(score('anna@example.com'));
+    expect(url).toBeGreaterThan(mac);
+    expect(mac).toBe(score('192.0.2.1'));
+    expect(score('DE89370400440532013000')).toBeGreaterThan(url);
+  });
+
+  it('lets a compressed IPv6 win over the MAC-shaped tail inside it', () => {
+    expect(detect('gw fe80::1a:2b:3c:4d:5e:6f up')).toEqual([
+      { type: 'IP', start: 3, end: 26, value: 'fe80::1a:2b:3c:4d:5e:6f', score: 0.7 },
+    ]);
+  });
+
   it('drops matches below minScore', () => {
     const detectors = [fixed('IP', [0, 3, 0.3]), fixed('CARD', [4, 6, 0.9])];
     expect(types('abc de', { detectors })).toEqual(['IP', 'CARD']);
