@@ -1,0 +1,90 @@
+[
+  {
+    "id": "mac-001",
+    "text": "Device 00:1A:2B:3C:4D:5E joined the network.",
+    "expected": [{ "type": "MAC", "value": "00:1A:2B:3C:4D:5E" }]
+  },
+  {
+    "id": "mac-002",
+    "text": "Laptop MAC is 00-1a-2b-3c-4d-5e.",
+    "expected": [{ "type": "MAC", "value": "00-1a-2b-3c-4d-5e" }]
+  },
+  {
+    "id": "mac-003",
+    "text": "The switch shows 001a.2b3c.4d5e on port 3",
+    "expected": [{ "type": "MAC", "value": "001a.2b3c.4d5e" }]
+  },
+  {
+    "id": "mac-004",
+    "text": "pair ac:de:48:00:11:22, ac:de:48:00:11:23",
+    "expected": [
+      { "type": "MAC", "value": "ac:de:48:00:11:22" },
+      { "type": "MAC", "value": "ac:de:48:00:11:23" }
+    ]
+  },
+  {
+    "id": "mac-005",
+    "text": "hw=02:00:5e:10:00:00;",
+    "expected": [{ "type": "MAC", "value": "02:00:5e:10:00:00" }]
+  },
+  {
+    "id": "mac-006",
+    "text": "Timestamp 12:34:56 logged",
+    "expected": []
+  },
+  {
+    "id": "mac-007",
+    "text": "Broadcast ff:ff:ff:ff:ff:ff is ignored",
+    "expected": []
+  },
+  {
+    "id": "mac-008",
+    "text": "Null 00:00:00:00:00:00 and 00-00-00-00-00-00 and FFFF.FFFF.FFFF too",
+    "expected": []
+  },
+  {
+    "id": "mac-009",
+    "text": "Versions 1.2.3.4.5.6 and 10.11.12 shipped",
+    "expected": []
+  },
+  {
+    "id": "mac-010",
+    "text": "Build 2026.1121.0930 is green",
+    "expected": []
+  },
+  {
+    "id": "mac-011",
+    "text": "Asset img_de-ad-be-ef-00-01.png and logo-ab-cd-ef-12-34-56.svg",
+    "expected": []
+  },
+  {
+    "id": "mac-012",
+    "text": "Seven groups aa:bb:cc:dd:ee:ff:00 are not a MAC",
+    "expected": []
+  },
+  {
+    "id": "mac-013",
+    "text": "Mixed 00:1a-2b:3c-4d:5e separators",
+    "expected": []
+  },
+  {
+    "id": "mac-014",
+    "text": "Route via aa:bb:cc:dd:ee:ff:11:22 today",
+    "expected": [{ "type": "IP", "value": "aa:bb:cc:dd:ee:ff:11:22" }]
+  },
+  {
+    "id": "mac-015",
+    "text": "Link-local fe80::1a:2b:3c:4d:5e:6f is up",
+    "expected": [{ "type": "IP", "value": "fe80::1a:2b:3c:4d:5e:6f" }]
+  },
+  {
+    "id": "mac-016",
+    "text": "ifconfig shows mac:00:1a:2b:3c:4d:5e on eth0",
+    "expected": [{ "type": "MAC", "value": "00:1a:2b:3c:4d:5e" }]
+  },
+  {
+    "id": "mac-017",
+    "text": "MAC:00:1A:2B:3C:4D:5E",
+    "expected": [{ "type": "MAC", "value": "00:1A:2B:3C:4D:5E" }]
+  }
+]

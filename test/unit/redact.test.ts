@@ -54,6 +54,13 @@ describe('restore', () => {
     expect(restore(text, mapping)).toBe(TEXT);
   });
 
+  it('round-trips URL and MAC tokens', () => {
+    const input = 'Profile https://example.com/u/anna, device 00:1a:2b:3c:4d:5e.';
+    const { text, mapping } = redact(input);
+    expect(text).toBe('Profile [URL_1], device [MAC_1].');
+    expect(restore(text, mapping)).toBe(input);
+  });
+
   it('leaves unknown tokens alone', () => {
     expect(restore('Hallo [EMAIL_7] und [NAME_1]', {})).toBe('Hallo [EMAIL_7] und [NAME_1]');
   });
@@ -97,6 +104,22 @@ describe('detect', () => {
     expect(iban).toBeGreaterThan(card);
     expect(card).toBeGreaterThan(email);
     expect(email).toBeGreaterThan(ip);
+  });
+
+  it('ranks URL (pattern plus TLD) above MAC (structure only)', () => {
+    const score = (text: string) => detect(text)[0]?.score ?? 0;
+    const url = score('https://example.com/a');
+    const mac = score('00:1a:2b:3c:4d:5e');
+    expect(url).toBe(score('anna@example.com'));
+    expect(url).toBeGreaterThan(mac);
+    expect(mac).toBe(score('192.0.2.1'));
+    expect(score('DE89370400440532013000')).toBeGreaterThan(url);
+  });
+
+  it('lets a compressed IPv6 win over the MAC-shaped tail inside it', () => {
+    expect(detect('gw fe80::1a:2b:3c:4d:5e:6f up')).toEqual([
+      { type: 'IP', start: 3, end: 26, value: 'fe80::1a:2b:3c:4d:5e:6f', score: 0.7 },
+    ]);
   });
 
   it('drops matches below minScore', () => {

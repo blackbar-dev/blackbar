@@ -36,10 +36,12 @@ npx blackbar restore --map mapping.json < answer.txt
 | Phone numbers                       | planned for v0.1    |
 | Credit card numbers (Luhn)          | ✅                  |
 | IP addresses (v4, v6)               | planned for v0.1    |
+| URLs (http, https, ftp, www.)       | ✅                  |
+| MAC addresses                       | ✅                  |
 | Names, postal addresses             | later (much harder) |
 
 Every match carries a `score` from 0 to 1. Checksum-validated formats score high (IBAN 0.95,
-card 0.9), pattern-only formats lower (e-mail 0.8, IP 0.7). Pass `minScore` to `detect` or
+card 0.9), pattern-only formats lower (e-mail 0.8, URL 0.8, IP 0.7, MAC 0.7). Pass `minScore` to `detect` or
 `redact` to be stricter; by default every match is reported. The range is not checked: a
 `minScore` above 1 drops every match. When matches overlap, the longer span wins, then the
 higher score, then the earlier one, so a short match never leaves part of a longer one in the

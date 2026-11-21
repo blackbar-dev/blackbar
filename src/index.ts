@@ -14,5 +14,9 @@ export {
   emailDetector,
   ibanDetector,
   ipDetector,
+  macDetector,
+  urlDetector,
 } from './detectors/index.js';
 export { isValidIpv4, isValidIpv6 } from './detectors/ip.js';
+export { isUsableMac } from './detectors/mac.js';
+export { hasKnownTld } from './detectors/url.js';

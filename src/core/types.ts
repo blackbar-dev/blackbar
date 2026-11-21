@@ -1,5 +1,5 @@
-/** Kinds of personal data Blackbar can detect. v0.1 target: EMAIL, PHONE, IBAN, CARD, IP. */
-export type EntityType = 'EMAIL' | 'PHONE' | 'IBAN' | 'CARD' | 'IP';
+/** Kinds of personal data Blackbar can detect. v0.1 target: EMAIL, PHONE, IBAN, CARD, IP, URL, MAC. */
+export type EntityType = 'EMAIL' | 'PHONE' | 'IBAN' | 'CARD' | 'IP' | 'URL' | 'MAC';
 
 /** One finding in a text. `start` is inclusive, `end` is exclusive (like String.prototype.slice). */
 export interface Match {
