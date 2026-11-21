@@ -1,3 +1,4 @@
+// The IdNr values here are synthetic and stand for no person; see test/corpus/README.md.
 import { describe, expect, it } from 'vitest';
 import {
   hasValidDigitFrequency,
@@ -67,11 +68,11 @@ describe('taxIdDetector', () => {
   it('ignores mixed separators, longer runs and glued words', () => {
     expect(values('47 152/039 646 471520396461 X47152039646 47152039646x')).toEqual([]);
   });
-  it('skips a grouped tax ID shape behind a phone prefix', () => {
-    expect(values('+49 30 47 152 039 646')).toEqual([]);
-    expect(values('+49\u00A030\u00A047\u00A0152\u00A0039\u00A0646')).toEqual([]);
-    expect(values('+49 47 152 039 646')).toEqual([]);
-    expect(values('030 47 152 039 646')).toEqual([]);
+  it('does not let a phone-like prefix hide a grouped ID', () => {
+    const scores = (text: string) => taxIdDetector.find(text).map((m) => [m.value, m.score]);
+    expect(scores('+49 30 47 152 039 646')).toEqual([['47 152 039 646', 0.6]]);
+    expect(scores('030 47 152 039 646')).toEqual([['47 152 039 646', 0.6]]);
+    expect(scores('Stand 01.05 47 152 039 646')).toEqual([['47 152 039 646', 0.6]]);
   });
   it('still finds a grouped ID next to another digit group, with a lower score', () => {
     const scores = (text: string) => taxIdDetector.find(text).map((m) => [m.value, m.score]);

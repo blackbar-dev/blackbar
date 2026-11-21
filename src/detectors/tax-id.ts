@@ -5,9 +5,10 @@ import type { Detector, Match } from '../core/types.js';
 // Digits may be ASCII or full-width (U+FF10-FF19, from CJK input or PDF copy-paste); separators are
 // space, slash, dot, hyphen, no-break space (U+00A0, Word) or narrow no-break space (U+202F, PDF).
 // Both forms stay out of longer digit runs and glued words. A grouped ID next to another digit
-// group ("Kind 2 29 381 075 632", "1/29/381/075/632") is still redacted, with a lower score, so a
-// number in front cannot hide it. Only the phone-like case is skipped: a "+" country code or a
-// 0-led area code right before the ID ("030 47 152 039 646", "+49 30 47 152 039 646").
+// group ("Kind 2 29 381 075 632", "1/29/381/075/632", "+49 30 47 152 039 646") is still redacted,
+// with a lower score, so no number in front or behind can hide it. Phone numbers that happen to
+// pass the check digit get redacted as TAX_ID for now; a later PHONE detector takes the span over
+// through the overlap rule (longer match wins).
 // TODO(#18): once hint words land, add "Steuer-ID", "IdNr", "Identifikationsnummer", "tax id".
 const D = '[0-9\\uFF10-\\uFF19]';
 const D1 = '[1-9\\uFF11-\\uFF19]';
@@ -15,12 +16,9 @@ const SEP = '[ /.\\-\\u00A0\\u202F]';
 const EDGE = '[\\w\\uFF10-\\uFF19]';
 const COMPACT = `(?<!${EDGE})${D1}${D}{10}(?!${EDGE})`;
 const GROUPED = `(?<!${EDGE})${D1}${D}(${SEP})${D}{3}\\1${D}{3}\\1${D}{3}(?!${EDGE})`;
-// Digit group with a separator right before or after a grouped ID, and the phone-like prefix.
+// Digit group with a separator right before or after a grouped ID.
 const NEIGHBOUR_BEFORE = new RegExp(`${D}${SEP}$`);
 const NEIGHBOUR_AFTER = new RegExp(`^${SEP}${D}`);
-const PHONE_PREFIX = new RegExp(
-  `(?:\\+${D}{1,3}${SEP}(?:${D}{1,5}${SEP})?|(?<!${EDGE})[0\\uFF10]${D}{1,5}${SEP})$`,
-);
 const CANDIDATE = new RegExp(`${COMPACT}|${GROUPED}`, 'g');
 
 /** Full-width digits to ASCII, separators dropped, so the checks below see plain "0-9". */
@@ -77,8 +75,7 @@ export const taxIdDetector: Detector = {
       if (!isValidTaxId(toAsciiDigits(m[0]))) continue;
       let score = SCORE;
       if (m[1] !== undefined) {
-        const before = text.slice(Math.max(0, m.index - 12), m.index);
-        if (PHONE_PREFIX.test(before)) continue;
+        const before = text.slice(Math.max(0, m.index - 2), m.index);
         const after = text.slice(m.index + m[0].length, m.index + m[0].length + 2);
         if (NEIGHBOUR_BEFORE.test(before) || NEIGHBOUR_AFTER.test(after)) score = NEIGHBOUR_SCORE;
       }

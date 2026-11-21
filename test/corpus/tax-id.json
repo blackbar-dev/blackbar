@@ -106,7 +106,12 @@
   {
     "id": "tax-id-015",
     "text": "Telefon +49 30 47 152 039 646",
-    "expected": []
+    "expected": [
+      {
+        "type": "TAX_ID",
+        "value": "47 152 039 646"
+      }
+    ]
   },
   {
     "id": "tax-id-016",
@@ -170,7 +175,12 @@
   {
     "id": "tax-id-022",
     "text": "Telefon +49\u00A030\u00A047\u00A0152\u00A0039\u00A0646",
-    "expected": []
+    "expected": [
+      {
+        "type": "TAX_ID",
+        "value": "47\u00A0152\u00A0039\u00A0646"
+      }
+    ]
   },
   {
     "id": "tax-id-023",
@@ -230,6 +240,21 @@
   {
     "id": "tax-id-029",
     "text": "Tel 0221 29 381 075 632",
-    "expected": []
+    "expected": [
+      {
+        "type": "TAX_ID",
+        "value": "29 381 075 632"
+      }
+    ]
+  },
+  {
+    "id": "tax-id-030",
+    "text": "Stand 01.05 29 381 075 632",
+    "expected": [
+      {
+        "type": "TAX_ID",
+        "value": "29 381 075 632"
+      }
+    ]
   }
 ]
