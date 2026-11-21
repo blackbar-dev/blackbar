@@ -32,17 +32,25 @@ export function hasKnownTld(host: string): boolean {
 }
 
 const count = (s: string, ch: string) => s.split(ch).length - 1;
+const SENTENCE_PUNCT = new Set(['.', ',', ';', ':', '!', '?']);
 
 // Sentence punctuation after a link belongs to the sentence. A closing bracket only belongs to
 // the URL when it closes one opened inside it ("…/wiki/Foo_(bar)" vs "(see https://…/a)").
+// The input is untrusted, so we count the brackets once and adjust the counts while trimming:
+// recounting per stripped character was O(n²) on a URL followed by a long run of ")".
 function trimTrailing(value: string): string {
-  let v = value;
-  for (;;) {
-    const last = v.at(-1) ?? '';
-    const open = last === ')' ? '(' : last === ']' ? '[' : '';
-    if (/[.,;:!?]/.test(last) || (open && count(v, open) < count(v, last))) v = v.slice(0, -1);
-    else return v;
+  // Surplus of closing over opening brackets; each stripped closer uses up one.
+  let parens = count(value, ')') - count(value, '(');
+  let squares = count(value, ']') - count(value, '[');
+  let end = value.length;
+  while (end > 0) {
+    const last = value.charAt(end - 1);
+    if (last === ')' && parens > 0) parens--;
+    else if (last === ']' && squares > 0) squares--;
+    else if (!SENTENCE_PUNCT.has(last)) break;
+    end--;
   }
+  return value.slice(0, end);
 }
 
 function hostOf(url: string): string {

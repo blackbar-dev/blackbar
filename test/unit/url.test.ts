@@ -40,6 +40,18 @@ describe('urlDetector', () => {
     expect(values('https://example.com/q?a[0]=1')).toEqual(['https://example.com/q?a[0]=1']);
     expect(values('"https://example.com/x";')).toEqual(['https://example.com/x']);
   });
+  it('trims mixed punctuation and brackets in one pass', () => {
+    expect(values('((https://example.com/a_(b)).)')).toEqual(['https://example.com/a_(b)']);
+    expect(values('[x https://example.com/y].]),')).toEqual(['https://example.com/y']);
+    expect(values('https://example.com/(a]')).toEqual(['https://example.com/(a']);
+  });
+  it('trims a long run of closing brackets in linear time', () => {
+    // Hostile input: recounting brackets per stripped ")" used to make this quadratic.
+    const text = `https://example.com/${')'.repeat(200_000)}${']'.repeat(200_000)}.`;
+    const started = performance.now();
+    expect(values(text)).toEqual(['https://example.com/']);
+    expect(performance.now() - started).toBeLessThan(1000);
+  });
   it('handles userinfo and ports in the host part', () => {
     expect(values('https://anna@example.com:8443/')).toEqual(['https://anna@example.com:8443/']);
     expect(values('https://example.com:abc/')).toEqual([]);
