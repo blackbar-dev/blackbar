@@ -1,0 +1,77 @@
+name: crew-review
+
+# After CI finishes on a crew PR, another character reviews it.
+# Reads only the diff and the CI result through the API. PR code is never checked out or run here.
+on:
+  workflow_run:
+    workflows: [ci]
+    types: [completed]
+  workflow_dispatch:
+    inputs:
+      pr:
+        description: PR number
+        required: true
+        type: number
+      reviewer:
+        description: Who reviews
+        required: true
+        default: rotation
+        type: choice
+        options: [rotation, ingrid, kevin, vale, dieter]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: crew-review-${{ github.event.workflow_run.head_branch || inputs.pr }}
+  cancel-in-progress: false
+
+jobs:
+  review:
+    if: >-
+      vars.CREW_ENABLED == 'true' && (
+        github.event_name == 'workflow_dispatch' || (
+          github.event.workflow_run.event == 'pull_request' &&
+          github.event.workflow_run.head_repository.full_name == github.repository &&
+          startsWith(github.event.workflow_run.head_branch, 'crew/') &&
+          github.event.workflow_run.pull_requests[0].number
+        )
+      )
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: App token (this repo only, 1 hour)
+        id: app
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ secrets.CREW_APP_ID }}
+          private-key: ${{ secrets.CREW_APP_PRIVATE_KEY }}
+
+      # Always main: the runner and personas come from main, never from the PR.
+      - uses: actions/checkout@v5
+        with:
+          ref: main
+          persist-credentials: false
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      # Builds main's Blackbar: the content filter uses it on the review text.
+      - name: Install
+        run: |
+          npm ci --ignore-scripts
+          npm ci --ignore-scripts --prefix .crew/runner
+          npm run build
+
+      - name: Review
+        env:
+          CREW_REPO: ${{ github.repository }}
+          CREW_PR: ${{ inputs.pr || github.event.workflow_run.pull_requests[0].number }}
+          CREW_REVIEWER: ${{ inputs.reviewer != 'rotation' && inputs.reviewer || '' }}
+          CREW_MODEL: ${{ vars.CREW_MODEL || 'claude-sonnet-5-5' }}
+          CREW_AUTO_MERGE: ${{ vars.CREW_AUTO_MERGE || 'false' }}
+          GH_TOKEN: ${{ steps.app.outputs.token }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: node .crew/runner/review.mjs

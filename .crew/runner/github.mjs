@@ -6,7 +6,7 @@ export function github(token, repo) {
     const res = await fetch(`${API}${path.replace('{repo}', repo)}`, {
       method,
       headers: {
-        authorization: `Bearer ${token}`,
+        ...(token ? { authorization: `Bearer ${token}` } : {}),
         accept: 'application/vnd.github+json',
         'x-github-api-version': '2022-11-28',
         ...(body ? { 'content-type': 'application/json' } : {}),
@@ -21,6 +21,7 @@ export function github(token, repo) {
     get: (p) => call('GET', p),
     post: (p, b) => call('POST', p, b),
     patch: (p, b) => call('PATCH', p, b),
+    put: (p, b) => call('PUT', p, b),
   };
 }
 
