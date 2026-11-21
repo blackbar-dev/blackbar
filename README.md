@@ -49,6 +49,20 @@ text. A match that only partly overlaps the winner is merged into it: the winner
 both spans, so no part of either finding stays in the text. A custom detector that leaves out `score` gets 1, so its matches are never dropped
 silently by any `minScore` up to 1.
 
+Hint words raise the score: `IP 1.2.3.4` is more likely an address than `Abschnitt 1.2.3.4`.
+Each built-in detector has a few German and English hints. If one appears in the 32 characters
+before a match, the score goes up by `HINT_STEP` (0.2), once, capped at 1. Case, umlaut spelling
+(`ü`/`ue`, `ß`/`ss`) and spaces vs. hyphens (`Steuer-ID`, `steuer id`) do not matter; hints match
+whole words only. Add your own per type and widen the window if you like:
+
+```ts
+detect(text, {
+  minScore: 0.8,
+  hints: { IP: ['Router', 'Gateway'] },
+  hintWindow: { before: 40, after: 20 },
+});
+```
+
 Every change is measured against a synthetic corpus (`test/corpus/`). CI blocks any change
 that lowers recall or precision. Current numbers are in each CI run's summary.
 

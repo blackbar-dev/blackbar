@@ -61,6 +61,7 @@ function hostOf(url: string): string {
 
 export const urlDetector: Detector = {
   type: 'URL',
+  hints: ['URL', 'Link', 'Webseite', 'Website', 'Homepage', 'Web-Adresse', 'web address'],
   find(text: string): Match[] {
     const matches: Match[] = [];
     for (const m of text.matchAll(CANDIDATE)) {
