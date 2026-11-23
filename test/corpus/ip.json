@@ -79,5 +79,15 @@
     "id": "ip-027",
     "text": "compat ::192.0.2.1 here",
     "expected": [{ "type": "IP", "value": "::192.0.2.1" }]
+  },
+  {
+    "id": "ip-028",
+    "text": "broken 2001:db8::192.0.2.4:5 tail",
+    "expected": [{ "type": "IP", "value": "192.0.2.4" }]
+  },
+  {
+    "id": "ip-029",
+    "text": "EUI-64 aa:bb:cc:dd:ee:ff:00:11 seen",
+    "expected": [{ "type": "IP", "value": "aa:bb:cc:dd:ee:ff:00:11" }]
   }
 ]

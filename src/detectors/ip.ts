@@ -5,6 +5,10 @@ import type { Detector, Match } from '../core/types.js';
 const IPV4 = /(?<![\w.])\d{1,3}(?:\.\d{1,3}){3}(?!\w|\.\d)/g;
 
 // Anything made of hex digits, colons and dots; validated structurally afterwards.
+// Eight hex groups are a valid IPv6 even when they look like an EUI-64 or hardware ID
+// ("aa:bb:cc:dd:ee:ff:00:11"). We keep that as IP on purpose: recall first. The text has
+// no way to tell an interface ID from a full-form address, and the ID is personal data
+// as well, so a wrong label is cheaper than a leak. (Six groups go to the MAC detector.)
 const IPV6_CANDIDATE = /(?<![\w:.])[0-9A-Fa-f:.]*:[0-9A-Fa-f:.]*/g;
 
 // Structure check only (octet ranges, group counts), no checksum. Dotted version numbers and
@@ -60,7 +64,9 @@ export const ipDetector: Detector = {
       if (!isValidIpv4(m[0])) continue;
       const start = m.index;
       const end = start + m[0].length;
-      // Skip IPv4 tails already covered by an IPv6 match.
+      // Skip IPv4 tails already covered by an IPv6 match. An IPv4 inside a *rejected* IPv6
+      // candidate ("2001:db8::192.0.2.4:5") is still reported: the dotted part is a valid
+      // address on its own, and dropping it would leave it in the text. Recall first.
       if (matches.some((v) => start < v.end && end > v.start)) continue;
       matches.push({ type: 'IP', start, end, value: m[0], score: SCORE });
     }

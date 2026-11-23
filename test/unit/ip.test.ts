@@ -57,6 +57,15 @@ describe('ipDetector', () => {
   it('reports a bare "::" plus IPv4 tail as one address', () => {
     expect(values('compat ::192.0.2.1 here')).toEqual(['::192.0.2.1']);
   });
+  it('still reports an IPv4 inside a rejected IPv6 candidate', () => {
+    expect(isValidIpv6('2001:db8::192.0.2.4:5')).toBe(false);
+    expect(ipDetector.find('broken 2001:db8::192.0.2.4:5 tail')).toEqual([
+      { type: 'IP', start: 17, end: 26, value: '192.0.2.4', score: 0.7 },
+    ]);
+  });
+  it('reports eight two-digit hex groups (EUI-64 shape) as IPv6', () => {
+    expect(values('EUI-64 aa:bb:cc:dd:ee:ff:00:11 seen')).toEqual(['aa:bb:cc:dd:ee:ff:00:11']);
+  });
   it('ignores version numbers, times and dates', () => {
     expect(values('v1.2.3.4 1.2.3.4.5 12:30:45 2026.11.21 std::vector')).toEqual([]);
   });
