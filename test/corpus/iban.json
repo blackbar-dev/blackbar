@@ -39,5 +39,52 @@
     "id": "iban-010",
     "text": "Konto NO93 8601 1117 947 i Oslo",
     "expected": [{ "type": "IBAN", "value": "NO93 8601 1117 947" }]
+  },
+  {
+    "id": "iban-011",
+    "text": "Zahlung an CH93 0076 2011 6238 5295 7 ist eingegangen.",
+    "expected": [{ "type": "IBAN", "value": "CH93 0076 2011 6238 5295 7" }]
+  },
+  {
+    "id": "iban-012",
+    "text": "Cuenta ES91 2100 0418 4502 0005 1332, titular Ana Ejemplo",
+    "expected": [{ "type": "IBAN", "value": "ES91 2100 0418 4502 0005 1332" }]
+  },
+  {
+    "id": "iban-013",
+    "text": "Rachunek PL61109010140000071219812874 do faktury FV/11/2026",
+    "expected": [{ "type": "IBAN", "value": "PL61109010140000071219812874" }]
+  },
+  {
+    "id": "iban-014",
+    "text": "IBAN GB29 NWBK 6016 1331 9268 19 BIC NWBKGB2L",
+    "expected": [{ "type": "IBAN", "value": "GB29 NWBK 6016 1331 9268 19" }]
+  },
+  {
+    "id": "iban-015",
+    "text": "Refund to (DK50 0040 0440 1162 43).",
+    "expected": [{ "type": "IBAN", "value": "DK50 0040 0440 1162 43" }]
+  },
+  {
+    "id": "iban-016",
+    "text": "Konto SE45 5000 0000 0583 9825 7466 och FI21 1234 5600 0007 85",
+    "expected": [
+      { "type": "IBAN", "value": "SE45 5000 0000 0583 9825 7466" },
+      { "type": "IBAN", "value": "FI21 1234 5600 0007 85" }
+    ]
+  },
+  { "id": "iban-017", "text": "Order number DE12 3456 7890 1234 5678 90 shipped", "expected": [] },
+  { "id": "iban-018", "text": "Ref DE89 3704 0044 0532 0130 01 is one digit off", "expected": [] },
+  { "id": "iban-019", "text": "Serial GB82WEST1234569876543 is one digit short", "expected": [] },
+  { "id": "iban-020", "text": "Tracking code XX12 3456 7890 1234 5678 90", "expected": [] },
+  {
+    "id": "iban-021",
+    "text": "Auftragsnummer AT12345678901234567890 vom 25.11.2026",
+    "expected": []
+  },
+  {
+    "id": "iban-022",
+    "text": "SKU NL00ABCD0123456789 and batch BE00 1234 5678 9012",
+    "expected": []
   }
 ]
